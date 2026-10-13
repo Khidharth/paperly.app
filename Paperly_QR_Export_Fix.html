@@ -1,0 +1,1803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paperly: free invoices, receipts, certificates and ID cards</title>
+<meta name="description" content="Make professional invoices, receipts, quotations, certificates, ID cards, event passes, invitations and business cards in minutes. Free, on any phone or computer.">
+<meta name="author" content="Simon Miracle Khidharth">
+<meta name="theme-color" content="#17414d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&family=Montserrat:wght@500;600;700&family=Playfair+Display:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+/* ===== Tokens: calm teal-and-brass, light and dark ===== */
+:root{
+  --bg:#f4f2ed; --bg2:#ebe7de; --surface:#ffffff; --surface2:#faf8f4; --fg:#16212b; --muted:#5d6b75; --line:#e0dcd2;
+  --b1:#17414d; --b2:#2d6c72; --accent:#8d6b2c; --accent-soft:#f1e8d4; --ok:#1f7a5a; --danger:#b3402f;
+  --shadow:0 1px 2px rgba(22,33,43,.06),0 10px 28px rgba(22,33,43,.08);
+  --grad:linear-gradient(135deg,#17414d 0%,#2d6c72 100%);
+  --hero:linear-gradient(155deg,#e7eeeb 0%,#f4f2ed 52%,#f0e6d0 135%);
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --ui:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1218; --bg2:#0f1820; --surface:#121c24; --surface2:#17232d; --fg:#e8edf0; --muted:#93a3ae; --line:#233340;
+  --b1:#1f5662; --b2:#2f7f83; --accent:#d3b06c; --accent-soft:#2a2418; --ok:#4cc79a; --danger:#ec8a78;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px rgba(0,0,0,.35);
+  --grad:linear-gradient(135deg,#1f5662 0%,#2f7f83 100%);
+  --hero:linear-gradient(155deg,#10222a 0%,#0b1218 58%,#1d1a12 140%); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1218; --bg2:#0f1820; --surface:#121c24; --surface2:#17232d; --fg:#e8edf0; --muted:#93a3ae; --line:#233340;
+  --b1:#1f5662; --b2:#2f7f83; --accent:#d3b06c; --accent-soft:#2a2418; --ok:#4cc79a; --danger:#ec8a78;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 30px rgba(0,0,0,.35);
+  --grad:linear-gradient(135deg,#1f5662 0%,#2f7f83 100%);
+  --hero:linear-gradient(155deg,#10222a 0%,#0b1218 58%,#1d1a12 140%); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--ui);font-size:16px;line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+img{max-width:100%}
+.wrap{width:100%;max-width:1220px;margin-inline:auto;padding-inline:max(16px,3vw)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+/* ===== Buttons ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:.95rem;line-height:1.1;text-decoration:none;transition:transform .12s,box-shadow .12s,border-color .12s;min-height:42px}
+.btn:hover{border-color:var(--b2);box-shadow:var(--shadow)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--grad);color:#fff;border-color:transparent}
+.btn.primary:hover{box-shadow:0 8px 22px rgba(23,65,77,.35)}
+.btn.gold{background:var(--accent-soft);border-color:transparent;color:var(--accent)}
+.btn.wa{background:#1f7a4f;color:#fff;border-color:transparent}
+.btn.sm{padding:7px 12px;min-height:34px;font-size:.88rem}
+.btn.ghost{background:transparent}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.ico{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== Top bar ===== */
+.top{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.top .wrap{display:flex;align-items:center;gap:14px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.3rem;text-decoration:none;border:0;background:none;padding:0}
+.brand i{width:32px;height:32px;border-radius:9px;background:var(--grad);display:grid;place-items:center;color:#fff;font-style:normal;font-size:1rem}
+.nav{display:flex;gap:4px;margin-left:12px}
+.nav button{background:none;border:0;padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
+.nav button:hover,.nav button[aria-current="true"]{color:var(--fg);background:var(--bg2)}
+.top .sp{flex:1}
+.pro-chip{font-size:.8rem;font-weight:700;padding:6px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+
+/* ===== Home ===== */
+.view[hidden]{display:none}
+.hero{background:var(--hero);border-bottom:1px solid var(--line)}
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding-block:56px}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.4rem);margin:12px 0 16px}
+.hero p.lead{font-size:1.1rem;color:var(--muted);max-width:52ch}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.ticks{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;color:var(--muted);font-size:.9rem;list-style:none;padding:0}
+.ticks li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:8px}
+.fan{position:relative;height:380px}
+.fan .thumb{position:absolute;width:62%;box-shadow:var(--shadow);border-radius:10px}
+.fan .t1{left:0;top:30px;transform:rotate(-5deg)}
+.fan .t2{right:0;top:0;transform:rotate(4deg);width:70%}
+.fan .t3{left:22%;bottom:0;width:52%;transform:rotate(-1deg)}
+.sec{padding-block:44px}
+.sec-h{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:14px;margin-bottom:22px}
+.sec-h h2{font-size:clamp(1.5rem,3vw,2rem)}
+.sec-h p{color:var(--muted);margin-top:6px;max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 14px;font-weight:600;font-size:.9rem;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.tcard{display:flex;flex-direction:column;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px;gap:12px;transition:transform .15s,box-shadow .15s,border-color .15s}
+.tcard:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--b2)}
+.tcard h3{font-size:1.1rem}
+.tcard p{color:var(--muted);font-size:.9rem;margin-top:2px}
+.tcard .go{margin-top:auto;font-weight:700;font-size:.9rem;color:var(--b2)}
+.thumb{position:relative;overflow:hidden;background:var(--bg2);border-radius:9px;border:1px solid var(--line);width:100%}
+.thumb>div{position:absolute;left:0;top:0;transform-origin:0 0;pointer-events:none}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.feat>div{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.feat h3{font-size:1.05rem;margin-bottom:6px}
+.feat p{color:var(--muted);font-size:.93rem}
+.band{background:var(--grad);color:#fff;border-radius:18px;padding:28px;display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.band h3{font-size:1.4rem}
+.band p{opacity:.88;max-width:56ch;margin-top:6px}
+.band .btn{background:#fff;color:#17414d;border-color:transparent}
+
+/* ===== Ads ===== */
+.ad{position:relative;margin-block:24px;min-height:90px;border-radius:12px}
+.ad.ph{border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:.85rem;background:var(--surface2)}
+.ad-l{position:absolute;top:4px;left:10px;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* ===== Editor ===== */
+.ed-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-block:16px}
+.ed-bar h2{font-size:1.4rem;margin-right:auto}
+.editor{display:grid;grid-template-columns:minmax(330px,440px) minmax(0,1fr);gap:24px;align-items:start;padding-bottom:40px}
+.pane-form{display:flex;flex-direction:column;gap:12px;min-width:0}
+.pane-prev{position:sticky;top:78px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.seg{display:none}
+details.sec-d{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+details.sec-d>summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+details.sec-d>summary::-webkit-details-marker{display:none}
+details.sec-d>summary::after{content:"+";font-size:1.3rem;color:var(--muted);font-weight:500}
+details.sec-d[open]>summary::after{content:"\2212"}
+.sec-body{padding:2px 16px 16px;display:grid;gap:12px}
+.fld{display:grid;gap:5px;min-width:0}
+.fld>span,.lbl{font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.02em}
+input[type=text],input[type=number],input[type=date],input[type=email],input[type=password],input[type=tel],select,textarea{width:100%;font:inherit;color:var(--fg);background:var(--surface2);border:1px solid var(--line);border-radius:9px;padding:10px 12px;min-height:42px}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--b2);outline-offset:0;border-color:transparent}
+.chk{display:flex;gap:10px;align-items:center;font-weight:600;font-size:.92rem}
+.chk input{width:18px;height:18px;accent-color:var(--b2)}
+.imgbox{display:flex;align-items:center;gap:12px}
+.imgbox .pv{width:58px;height:58px;border-radius:10px;border:1px dashed var(--line);background:var(--surface2) center/contain no-repeat;flex:none}
+.imgbox .pv.has{border-style:solid}
+.imgbox input[type=file]{display:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.items{display:grid;gap:8px}
+.it-row{display:grid;grid-template-columns:1fr 64px 96px 34px;gap:6px;align-items:center}
+.it-row.np{grid-template-columns:1fr 80px 34px}
+.it-row input{padding:9px 8px}
+.it-x{border:1px solid var(--line);background:var(--surface2);border-radius:8px;height:38px;color:var(--danger);font-size:1.1rem}
+.live{display:flex;justify-content:space-between;align-items:center;background:var(--accent-soft);border-radius:10px;padding:10px 14px;font-weight:700}
+.pal{display:flex;flex-wrap:wrap;gap:8px}
+.sw{width:38px;height:38px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}
+.colors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.colors input[type=color]{width:100%;height:42px;border:1px solid var(--line);border-radius:9px;padding:3px;background:var(--surface2)}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:7px 12px;font-weight:600;font-size:.88rem}
+.opt[aria-pressed="true"]{background:var(--grad);color:#fff;border-color:transparent}
+.stage-card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--radius);padding:14px;overflow:hidden}
+.stage{position:relative;margin-inline:auto}
+.stage-in{transform-origin:0 0;position:absolute;left:0;top:0;box-shadow:0 12px 36px rgba(0,0,0,.18)}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.mark{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--accent-soft);border-radius:12px;padding:10px 14px;font-size:.9rem}
+.hint{font-size:.82rem;color:var(--muted)}
+
+/* ===== Saved documents ===== */
+.empty{border:1px dashed var(--line);border-radius:var(--radius);padding:36px;text-align:center;color:var(--muted)}
+.scard .acts{display:flex;gap:8px}
+
+/* ===== Modal, toast, FAB ===== */
+.modal{position:fixed;inset:0;z-index:80;background:rgba(6,12,16,.6);display:grid;place-items:center;padding:16px;overflow:auto}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:18px;width:min(760px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:24px;box-shadow:var(--shadow)}
+.sheet-h{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:16px}
+.sheet-h h3{font-size:1.5rem}
+.x{border:1px solid var(--line);background:var(--surface2);border-radius:9px;width:38px;height:38px;font-size:1.2rem;line-height:1}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-block:14px}
+.plan{border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.plan[aria-pressed="true"]{border-color:var(--b2);box-shadow:0 0 0 2px var(--b2)}
+.plan b{font-family:var(--display);font-size:1.7rem}
+.plan small{color:var(--muted)}
+.plan .tag{align-self:flex-start;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:3px 9px}
+.list{margin:10px 0;padding-left:20px;display:grid;gap:4px;color:var(--muted);font-size:.93rem}
+progress{width:100%;height:12px;accent-color:var(--b2)}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#16212b;color:#fff;padding:12px 18px;border-radius:12px;z-index:100;max-width:90vw;box-shadow:var(--shadow);font-size:.93rem}
+.toast[hidden]{display:none}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;display:inline-flex;align-items:center;gap:8px;background:#1f7a4f;color:#fff;border-radius:99px;padding:12px 18px;font-weight:700;text-decoration:none;box-shadow:0 10px 26px rgba(0,0,0,.28)}
+.fab[hidden]{display:none}
+.busy{position:fixed;inset:0;z-index:90;background:rgba(6,12,16,.55);display:grid;place-items:center;color:#fff;font-weight:700}
+.busy[hidden]{display:none}
+
+/* ===== Footer ===== */
+footer{margin-top:auto;border-top:1px solid var(--line);background:var(--surface2);padding-block:28px 90px;color:var(--muted);font-size:.92rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;align-items:center}
+footer a{font-weight:600;text-decoration:none;color:var(--fg)}
+
+/* ===== Phone layout ===== */
+@media (max-width:960px){
+  .hero .wrap{grid-template-columns:1fr;padding-block:36px}
+  .fan{height:300px;order:-1}
+  .editor{grid-template-columns:1fr}
+  .pane-prev{position:static}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg2);padding:5px;border-radius:12px;position:sticky;top:64px;z-index:20}
+  .seg button{border:0;background:transparent;border-radius:9px;padding:10px;font-weight:700;color:var(--muted)}
+  .seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+  .editor[data-pane="form"] .pane-prev{display:none}
+  .editor[data-pane="prev"] .pane-form{display:none}
+  .nav{display:none}
+  .it-row{grid-template-columns:1fr 60px 90px 34px}
+}
+@media (max-width:480px){
+  .it-row{grid-template-columns:1fr 1fr 34px}
+  .it-row .it-d{grid-column:1/-1}
+  .it-row .it-x{grid-column:3;grid-row:2}
+  .it-row.np{grid-template-columns:1fr 34px}
+  .it-row.np .it-d{grid-column:1/-1}
+  .row2{grid-template-columns:1fr}
+  .sheet{padding:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* =====================================================================
+   DOCUMENT STYLES. Documents keep their own colours in light and dark mode.
+   ===================================================================== */
+.doc{position:relative;box-sizing:border-box;background:var(--paper,#fff);color:#1d2733;font-family:var(--bf);font-size:14px;line-height:1.45;text-align:left;overflow:hidden;letter-spacing:0}
+.doc *{box-sizing:border-box;margin:0}
+.doc b{font-weight:700}
+.dc-wm{gap:5px;position:absolute;left:0;right:0;bottom:0;height:40px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#7f8b97;letter-spacing:.04em;border-top:1px solid rgba(0,0,0,.08);background:rgba(250,250,251,.96);font-family:var(--bf);z-index:5}
+.dc-wm b{color:var(--c1)}
+
+/* Business documents */
+.biz{padding-bottom:62px}
+.biz .dc-top{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:38px 48px 26px}
+.biz.banded .dc-top{background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;padding-block:34px}
+.dc-rule{height:5px;background:linear-gradient(90deg,var(--c1),var(--c2) 62%,var(--ac))}
+.biz.banded .dc-rule{height:4px;background:var(--ac)}
+.dc-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.dc-logo{position:relative;width:66px;height:66px;border-radius:12px;flex:none}
+.dc-logo .li{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+.dc-logo.mono{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-family:var(--hf);font-weight:700;font-size:24px}
+.biz.banded .dc-logo{background:#fff}
+.biz.banded .dc-logo .li{inset:6px}
+.biz.banded .dc-logo.mono{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.5)}
+.dc-name{font-family:var(--hf);font-size:21px;font-weight:700;color:var(--c1);line-height:1.2}
+.dc-tag{font-size:12px;color:#6b7785;margin-top:2px}
+.biz.banded .dc-name{color:#fff}.biz.banded .dc-tag{color:rgba(255,255,255,.82)}
+.dc-ttl{text-align:right;flex:none}
+.dc-h{font-family:var(--hf);font-size:32px;font-weight:700;color:var(--c1);letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
+.dc-no{font-size:13px;color:#4b5866;margin-top:4px}
+.biz.banded .dc-h,.biz.banded .dc-no{color:#fff}
+.dc-stamp{display:inline-block;margin-top:8px;border:3px solid var(--c1);color:var(--c1);opacity:.7;font-family:var(--hf);font-weight:800;font-size:20px;letter-spacing:.14em;padding:2px 14px;border-radius:8px;transform:rotate(-5deg)}
+.biz.banded .dc-stamp{border-color:#fff;color:#fff;opacity:.9}
+.dc-body{padding:26px 48px 0}
+.dc-cols{display:grid;grid-template-columns:1.05fr 1.05fr .9fr;gap:26px;margin-bottom:22px}
+.dc-lab{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c1);font-weight:700;margin-bottom:6px}
+.dc-strong{font-weight:700;font-size:15px}
+.dc-sm{font-size:12.5px;color:#4b5866;word-break:break-word}
+.dc-kv{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;padding:2px 0}
+.dc-kv span:first-child{color:#6b7785}
+.dc-kv span:last-child{font-weight:600;text-align:right}
+.dc-row{display:grid;grid-template-columns:34px 1fr 62px 116px 124px;gap:10px;padding:10px 14px;align-items:start;border-bottom:1px solid #e8ebef;font-size:13px}
+.dc-row.np{grid-template-columns:34px 1fr 90px}
+.dc-row.hd{background:linear-gradient(100deg,var(--c1),var(--c2));color:#fff;font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border:0;border-radius:8px 8px 0 0;align-items:center}
+.dc-row.alt{background:var(--tint)}
+.dc-row .r{text-align:right}
+.dc-row .ds{word-break:break-word}
+.dc-sum{display:flex;justify-content:space-between;gap:28px;margin-top:20px;align-items:flex-start}
+.dc-l{flex:1;display:grid;gap:12px;min-width:0}
+.dc-tot{width:300px;flex:none}
+.dc-tl{display:flex;justify-content:space-between;padding:5px 2px;font-size:13px}
+.dc-tl span:last-child{font-weight:600}
+.dc-grand{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(100deg,var(--c1),var(--c2));color:#fff;border-radius:9px;padding:12px 14px;font-weight:700;font-size:16px;margin:8px 0}
+.dc-bal{display:flex;justify-content:space-between;padding:6px 2px;font-weight:700;color:var(--c1);font-size:14px;border-top:2px solid var(--ac)}
+.dc-box{border:1px solid #dfe4ea;border-radius:10px;padding:12px 14px;font-size:12.5px;background:var(--tint)}
+.dc-words{font-size:12.5px;color:#4b5866;font-style:italic}
+.dc-sigrow{display:flex;gap:40px;margin-top:34px;justify-content:flex-end}
+.dc-sig{width:220px;text-align:center}
+.dc-sigimg{height:56px;background-size:contain;background-repeat:no-repeat;background-position:center bottom}
+.dc-sigtxt{font-family:'Great Vibes','Brush Script MT',cursive;font-size:32px;color:var(--c1);height:56px;line-height:60px;white-space:nowrap}
+.dc-line{border-top:1.5px solid #1d2733;margin-top:4px}
+.dc-sn{font-weight:700;font-size:12.5px;margin-top:5px}
+.dc-sr{font-size:11.5px;color:#6b7785}
+.dc-blank{height:56px}
+.dc-thanks{margin-top:26px;text-align:center;font-family:var(--hf);color:var(--c1);font-size:15px}
+.biz.receipt .dc-top{padding:30px 34px 22px}
+.biz.receipt .dc-body{padding:22px 34px 0}
+.biz.receipt .dc-h{font-size:26px}
+.biz.receipt .dc-cols{grid-template-columns:1fr 1fr;gap:18px}
+.biz.receipt .dc-row{grid-template-columns:28px 1fr 46px 92px 100px;padding:9px 10px;font-size:12.5px}
+.biz.receipt .dc-tot{width:260px}
+.biz.receipt .dc-sigrow{margin-top:26px}
+
+/* ID card sheet */
+.sheet-bg{background:#e6e2d9;display:flex;justify-content:center;gap:30px;padding:30px 30px 62px}
+.id{position:relative;width:340px;height:540px;border-radius:22px;overflow:hidden;background:#fff;color:#1d2733;box-shadow:0 10px 26px rgba(0,0,0,.2);flex:none}
+.id.dark{background:linear-gradient(165deg,var(--c1),var(--c2));color:#fff}
+.id-hd{height:152px;background:linear-gradient(135deg,var(--c1),var(--c2));padding:22px 22px 0;display:flex;gap:12px;align-items:flex-start;color:#fff;border-bottom:5px solid var(--ac)}
+.id.dark .id-hd{background:rgba(0,0,0,.2)}
+.id-lg{position:relative;width:46px;height:46px;border-radius:10px;background:#fff;flex:none}
+.id-lg .li{position:absolute;inset:4px;background-size:contain;background-repeat:no-repeat;background-position:center}
+.id-lg.mono{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-family:var(--hf);font-weight:700;font-size:18px;color:#fff}
+.id-org{font-family:var(--hf);font-weight:700;font-size:17px;line-height:1.2;padding-top:2px}
+.id-orgs{font-size:11px;opacity:.85;margin-top:2px}
+.id-ph{position:absolute;left:100px;top:96px;width:140px;height:140px;border:6px solid #fff;background-size:cover;background-position:center;box-shadow:0 6px 16px rgba(0,0,0,.22);border-radius:50%}
+.id-ph.round{border-radius:22px}
+.id-body{position:absolute;top:252px;left:0;right:0;padding:0 24px;text-align:center}
+.id-nm{font-family:var(--hf);font-size:25px;font-weight:700;color:var(--c1);line-height:1.15}
+.id.dark .id-nm{color:#fff}
+.id-rl{margin-top:5px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);font-weight:700}
+.id-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;text-align:left}
+.id-m{border-top:1px solid rgba(128,128,128,.3);padding-top:6px;font-size:13px;font-weight:600}
+.id-m small{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.65;font-weight:700}
+.id-ft{position:absolute;left:22px;right:22px;bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}
+.qrb{background:#fff;padding:6px;border-radius:8px;width:86px;height:86px;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.qrb svg{width:100%;height:100%;display:block;shape-rendering:crispEdges}
+.id-no{text-align:right;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+.id-no b{display:block;font-size:17px;letter-spacing:.06em;color:var(--c1);opacity:1}
+.id.dark .id-no b{color:#fff}
+.id-bk{padding:34px 28px;text-align:center;height:100%;display:flex;flex-direction:column;align-items:center;gap:16px}
+.id-bk .t{font-family:var(--hf);font-size:19px;font-weight:700;color:var(--c1)}
+.id.dark .id-bk .t{color:#fff}
+.id-bk .tx{font-size:12.5px;line-height:1.6;opacity:.9}
+.id-bk .ct{font-size:12.5px;margin-top:auto;display:grid;gap:3px}
+.id-bk .bar{height:5px;width:60px;background:var(--ac);border-radius:3px}
+
+/* Event pass */
+.pass{width:400px;height:640px;background:#fff;color:#1d2733}
+.pass.dark{background:linear-gradient(170deg,var(--c1),var(--c2));color:#fff}
+.ps-top{height:208px;background:linear-gradient(145deg,var(--c1),var(--c2));color:#fff;padding:26px 28px;border-bottom:5px solid var(--ac);position:relative}
+.pass.dark .ps-top{background:rgba(0,0,0,.2)}
+.ps-org{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.92;margin-bottom:12px}
+.ps-lg{position:relative;width:34px;height:34px;border-radius:8px;background:#fff;flex:none}
+.ps-lg .li{position:absolute;inset:3px;background-size:contain;background-repeat:no-repeat;background-position:center}
+.ps-lg.mono{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:13px}
+.ps-ev{font-family:var(--hf);font-size:30px;font-weight:700;line-height:1.1}
+.ps-tg{font-size:13px;opacity:.88;margin-top:6px}
+.ps-when{position:absolute;left:28px;right:28px;bottom:16px;display:flex;gap:18px;font-size:13px;font-weight:600}
+.ps-mid{padding:22px 28px 0;display:flex;gap:16px;align-items:center}
+.ps-ph{width:92px;height:92px;border-radius:50%;background-size:cover;background-position:center;flex:none;border:4px solid var(--ac)}
+.ps-nm{font-family:var(--hf);font-size:28px;font-weight:700;color:var(--c1);line-height:1.12;word-break:break-word}
+.pass.dark .ps-nm{color:#fff}
+.ps-co{font-size:13px;opacity:.75;margin-top:3px}
+.ps-cat{display:inline-block;margin:16px 28px 0;background:var(--ac);color:#1b1b1b;padding:6px 16px;border-radius:99px;font-weight:800;letter-spacing:.16em;font-size:12px;text-transform:uppercase}
+.ps-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 28px 0}
+.ps-info div{font-size:13px;font-weight:600;border-top:1px solid rgba(128,128,128,.3);padding-top:6px}
+.ps-info small{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.65;font-weight:700}
+.ps-perf{position:absolute;left:18px;right:18px;top:482px;border-top:2px dashed rgba(128,128,128,.5)}
+.ps-ft{position:absolute;left:28px;right:28px;bottom:50px;display:flex;justify-content:space-between;align-items:center}
+.ps-tk{text-align:right;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
+.ps-tk b{display:block;font-size:17px;letter-spacing:.06em;color:var(--c1);opacity:1}
+.pass.dark .ps-tk b{color:#fff}
+.pass .dc-wm{height:34px}
+
+/* Invitation */
+.inv{width:600px;min-height:840px;padding:0}
+.inv .fr{position:absolute;inset:22px;border:1.5px solid var(--ac);pointer-events:none;z-index:3}
+.inv .fr2{position:absolute;inset:12px;border:8px solid var(--c1);pointer-events:none;z-index:3}
+.inv-in{position:relative;z-index:2;padding:78px 70px 90px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px;min-height:840px}
+.inv.banded .inv-hd{width:100%;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;padding:64px 50px 46px;display:flex;flex-direction:column;align-items:center;gap:14px;border-bottom:6px solid var(--ac)}
+.inv.banded .inv-in{padding:0 0 90px;gap:0}
+.inv.banded .inv-bd{padding:34px 60px 0;display:flex;flex-direction:column;align-items:center;gap:16px}
+.inv-lg{position:relative;width:62px;height:62px;border-radius:12px}
+.inv-lg .li{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+.inv.banded .inv-lg{background:#fff}.inv.banded .inv-lg .li{inset:6px}
+.inv-lead{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--ac);font-weight:700}
+.inv.banded .inv-lead{color:#f0dcae}
+.inv-t{font-family:var(--hf);font-size:44px;font-weight:700;color:var(--c1);line-height:1.08}
+.inv.banded .inv-t{color:#fff}
+.inv-gn{font-family:'Great Vibes','Brush Script MT',cursive;font-size:34px;color:var(--c1)}
+.inv-h{font-size:14px;font-style:italic;color:#4b5866}
+.inv-m{font-size:14.5px;line-height:1.65;color:#37424f;max-width:430px}
+.inv-orn{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--ac),transparent)}
+.inv-dt{display:grid;grid-template-columns:1fr 1fr;gap:6px 26px;width:100%;max-width:440px;border-block:1px solid rgba(128,128,128,.35);padding:16px 0;margin-top:6px}
+.inv-dt div{font-size:14px}
+.inv-dt small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--c1);font-weight:700}
+.inv-dt .full{grid-column:1/-1}
+.inv-ft{font-size:13px;color:#4b5866;display:grid;gap:3px}
+.inv .dc-wm{height:34px}
+
+/* Certificate */
+.cert{width:1123px;height:794px}
+.ct-fr{position:absolute;pointer-events:none}
+.ct-in{position:absolute;inset:62px 96px 56px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.cert.b-band .ct-in{inset:56px 90px 54px 200px}
+.ct-lg{position:relative;width:78px;height:78px;margin-bottom:6px}
+.ct-lg .li{position:absolute;inset:0;background-size:contain;background-repeat:no-repeat;background-position:center}
+.ct-org{font-size:15px;letter-spacing:.28em;text-transform:uppercase;color:var(--c1);font-weight:700}
+.ct-title{font-family:var(--hf);font-size:54px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c1);margin-top:12px;line-height:1.1}
+.ct-sub{font-size:17px;font-style:italic;color:#4b5866;margin-top:12px}
+.ct-name{margin-top:12px;color:var(--nc);line-height:1.15;max-width:100%;padding-inline:10px}
+.ct-name.script{font-family:'Great Vibes','Brush Script MT',cursive;font-size:84px}
+.ct-name.serif{font-family:'Playfair Display',Georgia,serif;font-size:56px;font-weight:700}
+.ct-name.italic{font-family:'Cormorant Garamond',Georgia,serif;font-size:66px;font-style:italic;font-weight:600}
+.ct-name.modern{font-family:'Montserrat',sans-serif;font-size:46px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ct-rule{width:420px;height:2px;background:linear-gradient(90deg,transparent,var(--ac),transparent);margin:14px 0}
+.ct-reason{font-size:17px;line-height:1.65;color:#37424f;max-width:760px}
+.ct-foot{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:space-between;align-items:flex-end}
+.ct-sig{width:250px;text-align:center}
+.ct-sigi{height:60px;background-size:contain;background-repeat:no-repeat;background-position:center bottom}
+.ct-sigt{height:60px;font-family:'Great Vibes','Brush Script MT',cursive;font-size:36px;line-height:64px;color:var(--c1);white-space:nowrap}
+.ct-line{border-top:1.5px solid #1d2733;margin-top:4px}
+.ct-sn{font-weight:700;font-size:14px;margin-top:5px}
+.ct-sr{font-size:12.5px;color:#6b7785}
+.ct-seal{width:132px;height:150px;flex:none}
+.ct-meta{position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-size:11.5px;letter-spacing:.1em;color:#6b7785;text-transform:uppercase}
+.cert .dc-wm{height:26px;font-size:10.5px}
+
+/* Business card sheet */
+.bc-sheet{width:585px;display:flex;flex-direction:column;align-items:center;gap:24px;background:#e6e2d9;padding:30px 30px 64px}
+.bc{position:relative;width:525px;height:300px;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.18);display:flex;flex:none}
+.bc.split .bl{width:176px;background:linear-gradient(160deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;border-right:5px solid var(--ac)}
+.bc-lg{position:relative;width:96px;height:96px;border-radius:18px;background:#fff}
+.bc-lg .li{position:absolute;inset:8px;background-size:contain;background-repeat:no-repeat;background-position:center}
+.bc-lg.mono{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--hf);font-weight:700;font-size:36px}
+.bc .br{flex:1;padding:30px 26px;display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0}
+.bc-nm{font-family:var(--hf);font-size:27px;font-weight:700;color:var(--c1);line-height:1.1}
+.bc-jt{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);font-weight:700}
+.bc-co{font-size:13px;color:#4b5866;margin-bottom:12px}
+.bc-ln{display:flex;align-items:center;gap:9px;font-size:12.5px;margin-top:5px;word-break:break-word}
+.bc-ic{width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;flex:none}
+.bc-ic svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bc.minimal{flex-direction:column;justify-content:center;padding:34px 38px;border-top:8px solid var(--c1)}
+.bc.minimal .br{padding:0}
+.bc.minimal .rule{width:46px;height:3px;background:var(--ac);margin:8px 0 12px}
+.bc.back{background:linear-gradient(145deg,var(--c1),var(--c2));color:#fff;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.bc.back .tg{font-family:var(--hf);font-size:17px;letter-spacing:.06em;max-width:360px;line-height:1.4;opacity:.95}
+.bc.back .ln{width:50px;height:3px;background:var(--ac);border-radius:2px}
+
+.sm2{display:none}
+@media (max-width:600px){.fab span{display:none}.fab{padding:14px}.lg{display:none}.sm2{display:inline}.top .wrap{gap:8px}.brand{font-size:1.15rem}}
+
+/* ===== Sign-in screen and accounts ===== */
+.gate{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:64px;min-height:70vh}
+.gate-l h1{font-size:clamp(2.1rem,4.6vw,3.2rem);margin:12px 0 16px}
+.gate-l .lead{font-size:1.1rem;color:var(--muted);max-width:50ch}
+.gate-by{margin-top:26px;color:var(--muted);font-size:.95rem}
+.gate-by b{color:var(--accent);font-family:var(--display);font-size:1.05rem}
+.gate-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow);display:grid;gap:14px}
+.gate-card form{display:grid;gap:14px}
+.gtabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg2);padding:5px;border-radius:12px}
+.gtabs button{border:0;background:transparent;border-radius:9px;padding:10px;font-weight:700;color:var(--muted)}
+.gtabs button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.gmsg{background:rgba(179,64,47,.1);color:var(--danger);border-radius:10px;padding:10px 12px;font-size:.92rem}
+.gmsg.ok{background:rgba(31,122,90,.12);color:var(--ok)}
+.linkbtn{background:none;border:0;color:var(--b2);font-weight:600;text-align:center;padding:4px}
+.gor{text-align:center;color:var(--muted);font-size:.85rem}
+.testbar{background:var(--accent-soft);color:var(--accent);text-align:center;padding:8px 16px;font-size:.88rem;font-weight:600}
+.avatar{width:36px;height:36px;padding:0;border-radius:50%;background:var(--grad)!important;color:#fff;border:0;font-weight:800}
+.gated .nav,.gated #proSlot,.gated #userSlot,.gated footer [data-pricing]{display:none}
+@media (max-width:960px){.gate{grid-template-columns:1fr;gap:26px;padding-block:28px}.gate-card{order:-1}}
+
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px;font:16px system-ui">Please turn on JavaScript to use this site.</p></noscript>
+<div id="fatal" style="display:none;position:fixed;z-index:200;left:12px;right:12px;top:12px;background:#b3402f;color:#fff;padding:12px 14px;border-radius:10px;font:14px system-ui"></div>
+<script>
+window.addEventListener('error',function(e){var f=document.getElementById('fatal');if(!f)return;f.style.display='block';f.textContent='Something stopped the page from loading: '+(e.message||'error')+(e.lineno?' (line '+e.lineno+')':'')+'. Try a full refresh. If it stays, send this message to the site owner.';});
+</script>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="Home"><i>P</i><span data-brand>Paperly</span></a>
+    <nav class="nav" aria-label="Main">
+      <button data-nav="home" aria-current="true">Templates</button>
+      <button data-nav="docs">My documents</button>
+      <button data-about>About</button>
+      <button data-help>Help</button>
+    </nav>
+    <span class="sp"></span>
+    <span id="proSlot"></span>
+    <span id="userSlot"></span>
+    <button class="btn sm ghost" id="theme" aria-label="Switch colour mode"></button>
+  </div>
+</header>
+
+<main>
+<div class="testbar" id="testBanner" hidden>Test mode: accounts and codes live only in this browser. Connect Supabase (see setup guide) before you go live.</div>
+<!-- SIGN IN -->
+<section class="view" id="v-gate" hidden>
+  <div class="gate wrap">
+    <div class="gate-l">
+      <span class="eyebrow">Free document maker</span>
+      <h1>Welcome to <span data-brand>Paperly</span>.</h1>
+      <p class="lead">Create invoices, receipts, certificates, ID cards, event passes and more. Sign in to keep your documents safe in your own account.</p>
+      <ul class="ticks"><li>Free to start</li><li>Your logo and colours</li><li>Works on any phone</li></ul>
+      <p class="gate-by">Originally created by <b data-creator>Simon Miracle Khidharth</b></p>
+    </div>
+    <div class="gate-card">
+      <div class="gtabs" role="group" aria-label="Sign in or create account"><button type="button" data-gtab="signin" aria-pressed="true">Sign in</button><button type="button" data-gtab="signup" aria-pressed="false">Create account</button></div>
+      <form id="gform" novalidate>
+        <div class="fld"><label for="gemail"><span>Email</span></label><input type="email" id="gemail" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>
+        <div class="fld"><label for="gpw"><span>Password</span></label><input type="password" id="gpw" autocomplete="current-password" placeholder="At least 6 characters"></div>
+        <div class="fld" id="gpw2box" hidden><label for="gpw2"><span>Repeat password</span></label><input type="password" id="gpw2" autocomplete="new-password"></div>
+        <p class="gmsg" id="gmsg" role="alert" hidden></p>
+        <button class="btn primary" id="gsubmit" type="submit">Sign in</button>
+        <button class="linkbtn" id="gforgot" type="button">Forgot password?</button>
+        <p class="gor" id="gor" hidden>or</p>
+        <button class="btn" id="ggoogle" type="button" hidden>Continue with Google</button>
+      </form>
+      <p class="hint" style="margin-top:14px">We only keep your email to run your account. Your documents stay on your device.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOME -->
+<section class="view" id="v-home" hidden>
+  <div class="hero"><div class="wrap">
+    <div>
+      <span class="eyebrow">Free document maker</span>
+      <h1>Professional documents, ready in minutes.</h1>
+      <p class="lead">Invoices, receipts, certificates, ID cards, event passes and more. Add your logo, pick your colours, then download or share on WhatsApp. No sign-up needed.</p>
+      <div class="cta"><button class="btn primary" data-go="invoice">Make an invoice</button><a class="btn" href="#templates">Browse all templates</a></div>
+      <ul class="ticks"><li>Free to use</li><li>Works on your phone</li><li>Your details stay on your device</li></ul>
+    </div>
+    <div class="fan" aria-hidden="true"><div class="thumb t1" data-cap="290" data-t="invoice"></div><div class="thumb t2" data-cap="250" data-t="certificate"></div><div class="thumb t3" data-cap="210" data-t="id"></div></div>
+  </div></div>
+
+  <div class="wrap"><div data-ad="home"></div></div>
+
+  <div class="wrap sec" id="templates">
+    <div class="sec-h"><div><h2>Choose what to make</h2><p>Every template can use your own logo, colours and wording.</p></div><div class="chips" id="chips"></div></div>
+    <div class="grid" id="tgrid"></div>
+  </div>
+
+  <div class="wrap sec">
+    <div class="sec-h"><div><h2>Made to be easy</h2></div></div>
+    <div class="feat">
+      <div><h3>Your brand, your look</h3><p>Upload your logo and choose from classy colour themes, or mix your own. No two certificates need look alike.</p></div>
+      <div><h3>Download or share</h3><p>Save as PDF or image, or send straight to WhatsApp from your phone.</p></div>
+      <div><h3>Many at once</h3><p>Paste a list of names and create certificates, ID cards, passes or invitations in one go.</p></div>
+      <div><h3>Private by design</h3><p>Documents are made in your browser and saved on your device. We do not collect them.</p></div>
+    </div>
+  </div>
+
+  <div class="wrap sec">
+    <div class="band"><div><h3>Want clean documents with no watermark?</h3><p>Free documents carry a small mark. Go Pro from <span id="fromPrice">&#8358;500</span> for a day pass, with no watermark and no ads.</p></div><button class="btn" data-pricing>See plans</button></div>
+  </div>
+</section>
+
+<!-- EDITOR -->
+<section class="view" id="v-editor" hidden>
+  <div class="wrap">
+    <div class="ed-bar"><button class="btn sm" id="back"><svg class="ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg> Back</button><h2 id="edTitle">Document</h2><button class="btn sm" id="saveBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg> Save</button></div>
+    <div class="seg" role="group" aria-label="Switch view"><button data-pane="form" aria-pressed="true">Edit</button><button data-pane="prev" aria-pressed="false">Preview and download</button></div>
+    <div class="editor" id="editor" data-pane="form">
+      <div class="pane-form" id="form"></div>
+      <div class="pane-prev">
+        <div class="stage-card" id="stageCard"><div class="stage" id="stage"><div class="stage-in" id="stageIn"></div></div></div>
+        <div class="mark" id="markBar"><span>Free documents carry a small <b data-brand>Paperly</b> mark.</span><button class="btn sm gold" data-pricing>Remove it</button></div>
+        <div class="actions">
+          <button class="btn primary" id="pdfBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg> Download PDF</button>
+          <button class="btn" id="pngBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg> Image (PNG)</button>
+          <button class="btn wa" id="shareBtn"><svg class="ico" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 01-12.6 7.4L3 20l1.2-5A8.5 8.5 0 1121 11.5z"/></svg> Share</button>
+          <button class="btn gold" id="bulkBtn" hidden><svg class="ico" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg> Make many</button>
+        </div>
+        <div data-ad="editor"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAVED -->
+<section class="view" id="v-docs" hidden>
+  <div class="wrap sec">
+    <div class="sec-h"><div><h2>My documents</h2><p>Saved on this device. Clearing your browser data will remove them.</p></div><a class="btn primary" href="#templates">New document</a></div>
+    <div class="grid" id="dgrid"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b data-brand>Paperly</b> &copy; <span id="year"></span> &middot; <span data-domain>paperly.app</span><br><span class="hint">Originally created by <b data-creator>Simon Miracle Khidharth</b>. All rights reserved.</span></div>
+    <div><a data-wa href="#">Chat on WhatsApp: <span data-wadisp>0903 132 7887</span></a><br><button class="btn sm ghost" data-about style="margin-top:6px">About the creator</button></div>
+    <div><button class="btn sm ghost" data-pricing>Pro plans</button></div>
+  </div>
+</footer>
+
+<a class="fab" data-wa href="#" aria-label="Chat on WhatsApp"><svg class="ico" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 01-12.6 7.4L3 20l1.2-5A8.5 8.5 0 1121 11.5z"/></svg><span>Help on WhatsApp</span></a>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="sheet" id="modalBody"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="busy" id="busy" hidden><div id="busyMsg">Working...</div></div>
+
+<script>
+/* ===== Built-in QR code encoder (byte mode, error level M, versions 1 to 10) ===== */
+const QR = (() => {
+  const EXP = new Array(512), LOG = new Array(256);
+  let x = 1; for (let i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 256) x ^= 0x11d; }
+  for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  const mul = (a, b) => a && b ? EXP[LOG[a] + LOG[b]] : 0;
+  const gen = n => { let p = [1]; for (let i = 0; i < n; i++) { const q = new Array(p.length + 1).fill(0); for (let j = 0; j < p.length; j++) { q[j] ^= p[j]; q[j + 1] ^= mul(p[j], EXP[i]); } p = q; } return p; };
+  const rs = (data, n) => { const g = gen(n), r = new Array(n).fill(0); for (const b of data) { const f = b ^ r.shift(); r.push(0); for (let i = 0; i < n; i++) r[i] ^= mul(g[i + 1], f); } return r; };
+  const VER = [null, { e: 10, b: [[1, 16]] }, { e: 16, b: [[1, 28]] }, { e: 26, b: [[1, 44]] }, { e: 18, b: [[2, 32]] }, { e: 24, b: [[2, 43]] }, { e: 16, b: [[4, 27]] }, { e: 18, b: [[4, 31]] }, { e: 22, b: [[2, 38], [2, 39]] }, { e: 22, b: [[3, 36], [2, 37]] }, { e: 26, b: [[4, 43], [1, 44]] }];
+  const ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50]];
+  const dataCw = v => VER[v].b.reduce((a, b) => a + b[0] * b[1], 0);
+  function encode(text) {
+    const bytes = [...unescape(encodeURIComponent(String(text)))].map(c => c.charCodeAt(0));
+    let v = 1; while (v <= 10 && (4 + (v < 10 ? 8 : 16) + bytes.length * 8) > dataCw(v) * 8) v++;
+    if (v > 10) return null;
+    const bits = []; const put = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push((val >> i) & 1); };
+    put(4, 4); put(bytes.length, v < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    const cap = dataCw(v) * 8; put(0, Math.min(4, cap - bits.length)); while (bits.length % 8) bits.push(0);
+    const cw = []; for (let i = 0; i < bits.length; i += 8) { let b = 0; for (let j = 0; j < 8; j++) b = (b << 1) | bits[i + j]; cw.push(b); }
+    for (let pad = 0xEC; cw.length < dataCw(v); pad ^= 0xEC ^ 0x11) cw.push(pad);
+    const blocks = []; let pos = 0;
+    VER[v].b.forEach(([n, len]) => { for (let i = 0; i < n; i++) { const d = cw.slice(pos, pos + len); pos += len; blocks.push({ d, e: rs(d, VER[v].e) }); } });
+    const out = []; const maxD = Math.max(...blocks.map(b => b.d.length));
+    for (let i = 0; i < maxD; i++) blocks.forEach(b => { if (i < b.d.length) out.push(b.d[i]); });
+    for (let i = 0; i < VER[v].e; i++) blocks.forEach(b => out.push(b.e[i]));
+    return { v, out };
+  }
+  function build(text) {
+    const enc = encode(text); if (!enc) return null;
+    const v = enc.v, size = 17 + 4 * v;
+    const m = Array.from({ length: size }, () => new Array(size).fill(false)), res = Array.from({ length: size }, () => new Array(size).fill(false));
+    const set = (r, c, val) => { if (r >= 0 && c >= 0 && r < size && c < size) { m[r][c] = !!val; res[r][c] = true; } };
+    const finder = (r0, c0) => { for (let dr = -1; dr <= 7; dr++) for (let dc = -1; dc <= 7; dc++) { const d = Math.max(Math.abs(dr - 3), Math.abs(dc - 3)); set(r0 + dr, c0 + dc, d !== 4 && d !== 2 && !(dr < 0 || dc < 0 || dr > 6 || dc > 6)); } };
+    finder(0, 0); finder(0, size - 7); finder(size - 7, 0);
+    for (let i = 8; i < size - 8; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    const al = ALIGN[v];
+    al.forEach(r => al.forEach(c => { if ((r === 6 && c === 6) || (r === 6 && c === al[al.length - 1]) || (r === al[al.length - 1] && c === 6)) return; for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) set(r + dr, c + dc, Math.max(Math.abs(dr), Math.abs(dc)) !== 1); }));
+    for (let i = 0; i < 9; i++) { res[8][i] = true; res[i][8] = true; }
+    for (let i = 0; i < 8; i++) { res[8][size - 1 - i] = true; res[size - 1 - i][8] = true; }
+    if (v >= 7) for (let i = 0; i < 6; i++) for (let j = 0; j < 3; j++) { res[i][size - 11 + j] = true; res[size - 11 + j][i] = true; }
+    // data placement
+    const bitsOut = []; enc.out.forEach(b => { for (let i = 7; i >= 0; i--) bitsOut.push((b >> i) & 1); });
+    let bi = 0;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) {
+        const c = right - j, up = ((right + 1) & 2) === 0, r = up ? size - 1 - vert : vert;
+        if (!res[r][c]) { m[r][c] = bi < bitsOut.length ? !!bitsOut[bi] : false; bi++; }
+      }
+    }
+    const MASKS = [(r, c) => (r + c) % 2 === 0, (r, c) => r % 2 === 0, (r, c) => c % 3 === 0, (r, c) => (r + c) % 3 === 0, (r, c) => (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0, (r, c) => (r * c) % 2 + (r * c) % 3 === 0, (r, c) => ((r * c) % 2 + (r * c) % 3) % 2 === 0, (r, c) => ((r + c) % 2 + (r * c) % 3) % 2 === 0];
+    const pen = g => { let p = 0; for (let k = 0; k < 2; k++) for (let a = 0; a < size; a++) { let run = 1; for (let b = 1; b < size; b++) { const cur = k ? g[b][a] : g[a][b], prev = k ? g[b - 1][a] : g[a][b - 1]; if (cur === prev) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else run = 1; } } for (let r = 0; r < size - 1; r++) for (let c = 0; c < size - 1; c++) if (g[r][c] === g[r][c + 1] && g[r][c] === g[r + 1][c] && g[r][c] === g[r + 1][c + 1]) p += 3; return p; };
+    const fmtBits = mask => { const d = (0 << 3) | mask; let rem = d; for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >> 9) * 0x537); return ((d << 10) | rem) ^ 0x5412; };
+    const withMask = mask => {
+      const g = m.map((row, r) => row.map((val, c) => res[r][c] ? val : val !== MASKS[mask](r, c)));
+      const bt = fmtBits(mask), bit = i => ((bt >> i) & 1) === 1, S = (r, c, val) => { g[r][c] = val; };
+      for (let i = 0; i <= 5; i++) S(i, 8, bit(i)); S(7, 8, bit(6)); S(8, 8, bit(7)); S(8, 7, bit(8)); for (let i = 9; i < 15; i++) S(8, 14 - i, bit(i));
+      for (let i = 0; i < 8; i++) S(8, size - 1 - i, bit(i)); for (let i = 8; i < 15; i++) S(size - 15 + i, 8, bit(i)); S(size - 8, 8, true);
+      if (v >= 7) { let rem = v; for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >> 11) * 0x1F25); const vb = (v << 12) | rem; for (let i = 0; i < 18; i++) { const bt2 = ((vb >> i) & 1) === 1, a = size - 11 + i % 3, b = Math.floor(i / 3); S(b, a, bt2); S(a, b, bt2); } }
+      return g;
+    };
+    let best = null, bp = 1e9; for (let k = 0; k < 8; k++) { const g = withMask(k), p = pen(g); if (p < bp) { bp = p; best = g; } }
+    return { n: size, dark: (r, c) => best[r][c] };
+  }
+  return { build };
+})();
+
+/* =====================================================================
+   SETTINGS: edit this block only.
+   ===================================================================== */
+const CONFIG = {
+  brand: 'Paperly',                 // your site name (also shown in the free watermark)
+  domain: 'paperly.app',            // your web address, shown in the free watermark
+  creator: 'Simon Miracle Khidharth', // shown in the footer and the About page
+  whatsapp: '2349031327887',        // WhatsApp number, international format, digits only
+  whatsappDisplay: '0903 132 7887', // how the number is shown to visitors
+  supabaseUrl: '',                  // from Supabase > Project Settings > API > Project URL. Leave empty for test mode.
+  supabaseKey: '',                  // from the same page: the "anon public" key (safe to put here)
+  googleSignIn: false,              // set true only after you switch Google on in Supabase
+  payBank: { bank: '', name: '', number: '' }, // your bank details, shown to customers who want to pay by transfer
+  ads: {
+    client: '',                     // Google AdSense id, e.g. ca-pub-1234567890123456
+    slots: { home: '', editor: '' },// ad unit ids from AdSense
+    placeholders: true              // true shows labelled empty ad boxes. Set to false before you go live.
+  },
+  plans: [                          // prices are in naira. Change freely.
+    { id: 'day',   name: 'Day pass',    price: 500,   days: 1,   blurb: '24 hours, no mark, no ads' },
+    { id: 'month', name: 'Pro monthly', price: 2000,  days: 30,  blurb: 'Best for regular use', best: true },
+    { id: 'year',  name: 'Pro yearly',  price: 15000, days: 365, blurb: 'Two months free, about 37% off' }
+  ],
+  freeBulkLimit: 5,
+  proBulkLimit: 300,
+  saveLimit: 40
+};
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nl = s => esc(s).replace(/\n/g, '<br>');
+const GLOBAL_KEYS = ['theme', 'session', 'users', 'dcodes'];
+const store = {
+  ns: '',
+  key(k) { return 'pp_' + (GLOBAL_KEYS.indexOf(k) >= 0 ? '' : store.ns) + k; },
+  get(k, d) { try { const v = localStorage.getItem(store.key(k)); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(store.key(k), JSON.stringify(v)); return true; } catch (e) { return false; } }
+};
+const uid = () => Math.random().toString(36).slice(2, 9);
+const pad = (n, l) => String(n).padStart(l, '0');
+const isoOf = d => d.getFullYear() + '-' + pad(d.getMonth() + 1, 2) + '-' + pad(d.getDate(), 2);
+const today = () => isoOf(new Date());
+const addDays = (iso, n) => { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return isoOf(d); };
+const fmtDate = iso => { if (!iso) return ''; const d = new Date(iso + 'T00:00:00'); return isNaN(d) ? iso : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); };
+const slug = s => String(s || 'document').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'document';
+const initials = s => (String(s || '').trim().split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('') || '?').toUpperCase();
+let gidN = 0; const gid = () => 'g' + (++gidN);
+
+const CUR = {
+  NGN: { s: '₦', n: 'Naira', m: 'Kobo' }, USD: { s: '$', n: 'Dollars', m: 'Cents' }, GBP: { s: '£', n: 'Pounds', m: 'Pence' },
+  EUR: { s: '€', n: 'Euros', m: 'Cents' }, GHS: { s: 'GH₵', n: 'Cedis', m: 'Pesewas' }, KES: { s: 'KSh ', n: 'Shillings', m: 'Cents' }, ZAR: { s: 'R', n: 'Rand', m: 'Cents' }
+};
+const money = (v, c) => (CUR[c] || CUR.NGN).s + (Number(v) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+const TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+function chunkWords(n) {
+  let s = '';
+  if (n >= 100) { s += ONES[Math.floor(n / 100)] + ' Hundred'; n %= 100; if (n) s += ' and '; }
+  if (n >= 20) { s += TENS[Math.floor(n / 10)]; if (n % 10) s += '-' + ONES[n % 10]; } else if (n > 0) s += ONES[n];
+  return s;
+}
+function numWords(n) {
+  n = Math.floor(n); if (n === 0) return 'Zero';
+  const sc = ['', 'Thousand', 'Million', 'Billion', 'Trillion']; const out = []; let i = 0;
+  while (n > 0 && i < sc.length) { const c = n % 1000; if (c) out.unshift(chunkWords(c) + (sc[i] ? ' ' + sc[i] : '')); n = Math.floor(n / 1000); i++; }
+  return out.join(', ');
+}
+function amountWords(v, c) {
+  const cu = CUR[c] || CUR.NGN; const t = Math.round(Math.abs(Number(v) || 0) * 100);
+  const major = Math.floor(t / 100), minor = t % 100;
+  let s = numWords(major) + ' ' + cu.n; if (minor) s += ' and ' + numWords(minor) + ' ' + cu.m;
+  return s + ' Only';
+}
+const hex2rgb = h => { h = String(h || '#000').replace('#', ''); if (h.length === 3) h = [...h].map(c => c + c).join(''); const n = parseInt(h, 16) || 0; return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const rgba = (h, a) => { const [r, g, b] = hex2rgb(h); return `rgba(${r},${g},${b},${a})`; };
+
+function readImage(file, max, keepAlpha) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader(); fr.onerror = rej;
+    fr.onload = () => {
+      const im = new Image(); im.onerror = rej;
+      im.onload = () => {
+        let w = im.width, h = im.height; const k = Math.min(1, max / Math.max(w, h));
+        w = Math.max(1, Math.round(w * k)); h = Math.max(1, Math.round(h * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
+        const png = keepAlpha && /png|svg|webp|gif/.test(file.type);
+        if (!png) { x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); }
+        x.drawImage(im, 0, 0, w, h);
+        res(png ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', .88));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+const avatar = (c1, c2) => 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c2}"/><stop offset="1" stop-color="${c1}"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><circle cx="100" cy="78" r="36" fill="rgba(255,255,255,.88)"/><path d="M30 200c6-48 38-70 70-70s64 22 70 70z" fill="rgba(255,255,255,.88)"/></svg>`).replace(/'/g, '%27');
+
+function qrImg(text) {
+  try {
+    if (!text) return '';
+    const q = QR.build(String(text)); if (!q) return '';
+    const n = q.n; let p = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.dark(r, c)) p += `M${c} ${r}h1v1h-1z`;
+    // Keep the QR as inline SVG so html2canvas can capture it reliably on export.
+    // An SVG embedded inside an <img> data URL may appear in preview but disappear in PNG/PDF.
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="${n}" height="${n}" fill="#fff"/><path d="${p}" fill="#111"/></svg>`;
+  } catch (e) { return ''; }
+}
+
+/* ===== Palettes and fonts ===== */
+const PALETTES = [
+  { id: 'harbour', n: 'Harbour', c1: '#17414d', c2: '#2f7479', ac: '#b79a5e' },
+  { id: 'emerald', n: 'Emerald', c1: '#123f33', c2: '#2c7a5d', ac: '#c1a15f' },
+  { id: 'navy', n: 'Midnight', c1: '#14213d', c2: '#3d5a8a', ac: '#c2a265' },
+  { id: 'burgundy', n: 'Burgundy', c1: '#571a2a', c2: '#9a3c50', ac: '#c6a574' },
+  { id: 'plum', n: 'Plum', c1: '#38224f', c2: '#7551a0', ac: '#d0b57a' },
+  { id: 'slate', n: 'Slate', c1: '#27384c', c2: '#5f7d9d', ac: '#b8975a' },
+  { id: 'sand', n: 'Sandstone', c1: '#6d5232', c2: '#b99a64', ac: '#2e4b52' },
+  { id: 'rose', n: 'Dusty rose', c1: '#7d4152', c2: '#c58a97', ac: '#8b6f3f' },
+  { id: 'charcoal', n: 'Charcoal', c1: '#1f2329', c2: '#505968', ac: '#b8955a' },
+  { id: 'forest', n: 'Forest and gold', c1: '#1f3a2b', c2: '#4b7a4f', ac: '#caa95a' }
+];
+const FONTS = {
+  modern: { n: 'Modern', h: "'Montserrat','Figtree',sans-serif" },
+  classic: { n: 'Classic', h: "'Playfair Display',Georgia,serif" },
+  elegant: { n: 'Elegant', h: "'Cormorant Garamond',Georgia,serif" }
+};
+const BODYFONT = "'Figtree',system-ui,'Segoe UI',sans-serif";
+const PAPER = { ivory: '#fbf7ee', white: '#ffffff' };
+
+/* ===== Saved settings and Pro status ===== */
+let ENT = null;   // { until, plan } set after sign-in from the account's profile
+const entitlement = () => ENT;
+const isPro = () => !!(ENT && ENT.until > Date.now());
+const daysLeft = () => ENT ? Math.max(0, Math.ceil((ENT.until - Date.now()) / 864e5)) : 0;
+const waLink = msg => `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg || `Hello ${CONFIG.brand}, I need help.`)}`;
+async function sha256(s) {
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(s).trim()));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+window.paperlyHash = sha256;
+
+/* =====================================================================
+   DOCUMENT RENDERERS: each returns an HTML string for one document.
+   ===================================================================== */
+const wm = cls => isPro() ? '' : `<div class="dc-wm ${cls || ''}">Made free with <b>${esc(CONFIG.brand)}</b> &middot; ${esc(CONFIG.domain)}</div>`;
+
+function rootStyle(S, extra) {
+  const st = S.st, f = FONTS[st.font] || FONTS.modern;
+  const paper = PAPER[st.paper] || '#ffffff';
+  return `--c1:${st.c1};--c2:${st.c2};--ac:${st.ac};--tint:${rgba(st.c1, .055)};--hf:${f.h};--bf:${BODYFONT};--paper:${paper};${extra || ''}`;
+}
+const logoTile = (d, cls, name) => d.logo
+  ? `<div class="${cls}"><div class="li" style="background-image:url('${d.logo}')"></div></div>`
+  : `<div class="${cls} mono">${esc(initials(name))}</div>`;
+const lines = arr => arr.filter(Boolean).map(x => `<div class="dc-sm">${esc(x)}</div>`).join('');
+
+function compute(d, T) {
+  const rows = (d.items || []).map(r => ({ d: r.d, q: Number(r.q) || 0, p: Number(r.p) || 0, amt: (Number(r.q) || 0) * (Number(r.p) || 0) }));
+  const sub = rows.reduce((a, r) => a + r.amt, 0);
+  let disc = 0;
+  if (T.calc.discount) { const v = Number(d.discount) || 0; disc = d.discountType === 'amt' ? v : sub * v / 100; disc = Math.min(Math.max(disc, 0), sub); }
+  const base = sub - disc;
+  const rate = T.calc.tax ? (Number(d.taxRate) || 0) : 0;
+  const tax = base * rate / 100;
+  const ship = T.calc.shipping ? (Number(d.shipping) || 0) : 0;
+  const total = base + tax + ship;
+  let paid = 0;
+  if (T.calc.paid) paid = (d.paid === '' || d.paid == null) ? (T.paidFull ? total : 0) : (Number(d.paid) || 0);
+  return { rows, sub, disc, rate, tax, ship, total, paid, bal: total - paid };
+}
+
+function sigBlock(d, label) {
+  if (!d.showSig) return '';
+  const mark = d.sigImg ? `<div class="dc-sigimg" style="background-image:url('${d.sigImg}')"></div>` : (d.sigName ? `<div class="dc-sigtxt">${esc(d.sigName)}</div>` : '<div class="dc-blank"></div>');
+  return `<div class="dc-sig">${mark}<div class="dc-line"></div><div class="dc-sn">${esc(d.sigName || label || 'Authorised signature')}</div><div class="dc-sr">${esc(d.sigRole || label || '')}</div></div>`;
+}
+const blankSig = (label) => `<div class="dc-sig"><div class="dc-blank"></div><div class="dc-line"></div><div class="dc-sn">${esc(label)}</div></div>`;
+
+function bizDoc(S) {
+  const T = TYPES[S.type], d = S.d, st = S.st, cur = d.currency;
+  const c = compute(d, T);
+  const title = S.type === 'invoice' ? (d.title || 'Invoice') : T.docTitle;
+  const np = !T.calc.price;
+  const meta = T.meta(d).filter(m => m[1]);
+  const num = d.number ? `${T.numLabel} ${esc(d.number)}` : '';
+  const stamp = d.stamp ? `<div class="dc-stamp">${esc(d.stamp)}</div>` : '';
+  const head = `<div class="dc-top"><div class="dc-brand">${logoTile(d, 'dc-logo', d.bizName)}<div><div class="dc-name">${esc(d.bizName)}</div>${d.tagline ? `<div class="dc-tag">${esc(d.tagline)}</div>` : ''}</div></div><div class="dc-ttl"><div class="dc-h">${esc(title)}</div><div class="dc-no">${num}</div>${stamp}</div></div><div class="dc-rule"></div>`;
+  const from = lines([d.bizAddress, d.bizPhone, d.bizEmail, d.bizWebsite, d.bizTax && ('Tax ID: ' + d.bizTax)]);
+  const party = `<div class="dc-strong">${esc(d.clientName)}</div>${lines([d.clientAddress, d.clientPhone, d.clientEmail])}`;
+  const metaHtml = meta.map(m => `<div class="dc-kv"><span>${esc(m[0])}</span><span>${esc(m[1])}</span></div>`).join('');
+  const cols = `<div class="dc-cols"><div><div class="dc-lab">From</div>${from}</div><div><div class="dc-lab">${esc(T.party)}</div>${party}</div><div><div class="dc-lab">Details</div>${metaHtml}</div></div>`;
+  const ship = (S.type === 'po' && d.shipTo) ? `<div class="dc-box" style="margin-bottom:18px"><div class="dc-lab">Ship to</div><div class="dc-sm">${nl(d.shipTo)}</div></div>` : '';
+  const hd = np ? `<div class="dc-row hd np"><div>#</div><div>Description</div><div class="r">Qty</div></div>`
+    : `<div class="dc-row hd"><div>#</div><div>Description</div><div class="r">Qty</div><div class="r">Unit price</div><div class="r">Amount</div></div>`;
+  const rows = c.rows.map((r, i) => np
+    ? `<div class="dc-row np ${i % 2 ? 'alt' : ''}"><div>${i + 1}</div><div class="ds">${esc(r.d)}</div><div class="r">${r.q}</div></div>`
+    : `<div class="dc-row ${i % 2 ? 'alt' : ''}"><div>${i + 1}</div><div class="ds">${esc(r.d)}</div><div class="r">${r.q}</div><div class="r">${money(r.p, cur)}</div><div class="r">${money(r.amt, cur)}</div></div>`).join('');
+  let totals = '';
+  if (!np) {
+    totals = `<div class="dc-tot"><div class="dc-tl"><span>Subtotal</span><span>${money(c.sub, cur)}</span></div>`;
+    if (c.disc > 0) totals += `<div class="dc-tl"><span>Discount${d.discountType === 'pct' ? ' (' + (Number(d.discount) || 0) + '%)' : ''}</span><span>&minus;${money(c.disc, cur)}</span></div>`;
+    if (c.rate > 0) totals += `<div class="dc-tl"><span>${esc(d.taxLabel || 'Tax')} (${c.rate}%)</span><span>${money(c.tax, cur)}</span></div>`;
+    if (c.ship > 0) totals += `<div class="dc-tl"><span>Shipping</span><span>${money(c.ship, cur)}</span></div>`;
+    totals += `<div class="dc-grand"><span>${S.type === 'receipt' ? 'Total' : 'Total due'}</span><span>${money(c.total, cur)}</span></div>`;
+    if (T.calc.paid && (c.paid > 0 || S.type === 'receipt')) {
+      totals += `<div class="dc-tl"><span>${S.type === 'receipt' ? 'Amount received' : 'Amount paid'}</span><span>${money(c.paid, cur)}</span></div>`;
+      if (Math.abs(c.bal) > 0.004) totals += `<div class="dc-bal"><span>${c.bal < 0 ? 'Change / credit' : 'Balance due'}</span><span>${money(Math.abs(c.bal), cur)}</span></div>`;
+    }
+    totals += '</div>';
+  }
+  const left = [];
+  if (!np && d.showWords) left.push(`<div class="dc-words"><b style="font-style:normal">Amount in words:</b> ${esc(amountWords(S.type === 'receipt' ? (c.paid || c.total) : c.total, cur))}</div>`);
+  if (T.calc.bank && d.showBank && (d.bankName || d.accNo || d.accName)) {
+    left.push(`<div class="dc-box"><div class="dc-lab">Payment details</div><div class="dc-sm"><b>${esc(d.bankName)}</b></div><div class="dc-sm">${esc(d.accName)}</div><div class="dc-sm">Account no: <b>${esc(d.accNo)}</b></div>${d.payNote ? `<div class="dc-sm">${esc(d.payNote)}</div>` : ''}</div>`);
+  }
+  if (d.notes) left.push(`<div><div class="dc-lab">Notes</div><div class="dc-sm">${nl(d.notes)}</div></div>`);
+  if (d.terms) left.push(`<div><div class="dc-lab">Terms</div><div class="dc-sm">${nl(d.terms)}</div></div>`);
+  const sum = `<div class="dc-sum"><div class="dc-l">${left.join('')}</div>${totals}</div>`;
+  const sigs = [];
+  if (T.accept) sigs.push(blankSig('Accepted by (name and signature)'), blankSig('Date'));
+  if (T.receivedBy) sigs.push(blankSig('Received by (name and signature)'), blankSig('Date received'));
+  const sg = sigBlock(d, T.sigLabel);
+  if (sg) sigs.push(sg);
+  const sigRow = sigs.length ? `<div class="dc-sigrow">${sigs.join('')}</div>` : '';
+  const thanks = d.thanks ? `<div class="dc-thanks">${esc(d.thanks)}</div>` : '';
+  const w = T.w;
+  return `<div class="doc biz ${st.layout === 'banded' ? 'banded' : 'clean'} ${S.type}" style="${rootStyle(S)}width:${w}px;min-height:${T.minH}px">${head}<div class="dc-body">${cols}${ship}<div>${hd}${rows}</div>${sum}${sigRow}${thanks}</div>${wm()}</div>`;
+}
+
+/* ===== ID card ===== */
+function idDoc(S) {
+  const d = S.d, st = S.st, dark = st.tone === 'dark', shape = st.shape === 'round' ? 'round' : '';
+  const photo = d.photo || avatar(st.c1, st.c2);
+  const metas = [[d.f1l, d.f1v], [d.f2l, d.f2v]].filter(m => m[1]).map(m => `<div class="id-m"><small>${esc(m[0])}</small>${esc(m[1])}</div>`).join('');
+  const qr = d.showQr ? `<div class="qrb">${qrImg(d.qrText || [d.idNumber, d.fullName].filter(Boolean).join(' | '))}</div>` : '<div></div>';
+  const front = `<div class="id ${dark ? 'dark' : ''}"><div class="id-hd">${logoTile(d, 'id-lg', d.orgName)}<div><div class="id-org">${esc(d.orgName)}</div>${d.orgTag ? `<div class="id-orgs">${esc(d.orgTag)}</div>` : ''}</div></div>
+    <div class="id-ph ${shape}" style="background-image:url('${photo}')"></div>
+    <div class="id-body"><div class="id-nm">${esc(d.fullName)}</div><div class="id-rl">${esc(d.role)}</div><div class="id-meta">${metas}</div></div>
+    <div class="id-ft">${qr}<div class="id-no">ID number<b>${esc(d.idNumber)}</b></div></div></div>`;
+  const sig = d.showSig ? (d.sigImg ? `<div class="dc-sigimg" style="background-image:url('${d.sigImg}');width:150px"></div>` : (d.sigName ? `<div class="dc-sigtxt" style="font-size:28px;color:${dark ? '#fff' : st.c1}">${esc(d.sigName)}</div>` : '')) + (d.sigName || d.sigRole ? `<div style="font-size:11.5px;opacity:.85">${esc([d.sigName, d.sigRole].filter(Boolean).join(', '))}</div>` : '') : '';
+  const back = `<div class="id ${dark ? 'dark' : ''}"><div class="id-hd" style="height:78px;border-bottom-width:4px"><div class="id-org" style="padding-top:8px">${esc(d.orgName)}</div></div><div class="id-bk"><div class="bar"></div><div class="t">Terms of use</div><div class="tx">${nl(d.backText)}</div>${sig ? `<div style="margin-top:6px">${sig}</div>` : ''}<div class="ct">${[d.orgAddress && esc(d.orgAddress), d.orgPhone && esc(d.orgPhone), d.orgWeb && esc(d.orgWeb)].filter(Boolean).map(x => `<div>${x}</div>`).join('')}</div></div></div>`;
+  return `<div class="doc" style="${rootStyle(S)}width:770px"><div class="sheet-bg">${front}${back}</div>${wm()}</div>`;
+}
+
+/* ===== Event pass ===== */
+function passDoc(S) {
+  const d = S.d, st = S.st, dark = st.tone === 'dark';
+  const when = [d.date && fmtDate(d.date), d.time].filter(Boolean).join('  ·  ');
+  const photo = d.showPhoto ? `<div class="ps-ph" style="background-image:url('${d.photo || avatar(st.c1, st.c2)}')"></div>` : '';
+  const info = [['Venue', d.venue], ['Seat or table', d.seat]].filter(x => x[1]).map(x => `<div><small>${x[0]}</small>${esc(x[1])}</div>`).join('');
+  const qr = d.showQr ? `<div class="qrb">${qrImg(d.ticketNo ? `${d.ticketNo} | ${d.attendeeName}` : d.attendeeName)}</div>` : '<div></div>';
+  return `<div class="doc pass ${dark ? 'dark' : ''}" style="${rootStyle(S)}width:400px;height:640px"><div class="ps-top"><div class="ps-org">${logoTile(d, 'ps-lg', d.orgName)}<span>${esc(d.orgName)}</span></div><div class="ps-ev">${esc(d.eventName)}</div>${d.eventTag ? `<div class="ps-tg">${esc(d.eventTag)}</div>` : ''}<div class="ps-when"><span>${esc(when)}</span></div></div>
+    <div class="ps-mid">${photo}<div><div class="ps-nm">${esc(d.attendeeName)}</div>${d.company ? `<div class="ps-co">${esc(d.company)}</div>` : ''}</div></div>
+    ${d.category ? `<div class="ps-cat">${esc(d.category)}</div>` : ''}<div class="ps-info">${info}</div>
+    <div class="ps-perf"></div><div class="ps-ft">${qr}<div class="ps-tk">Ticket<b>${esc(d.ticketNo)}</b></div></div>${wm()}</div>`;
+}
+
+/* ===== Invitation ===== */
+function invDoc(S) {
+  const d = S.d, st = S.st, banded = st.layout === 'banded';
+  const logo = d.logo ? `<div class="inv-lg"><div class="li" style="background-image:url('${d.logo}')"></div></div>` : '';
+  const title = `<div class="inv-lead">${esc(d.lead)}</div><div class="inv-t">${esc(d.eventTitle)}</div>`;
+  const body = `${d.guestName ? `<div class="inv-gn">${esc(d.guestName)}</div>` : ''}${d.hosts ? `<div class="inv-h">Hosted by ${esc(d.hosts)}</div>` : ''}<div class="inv-orn"></div><div class="inv-m">${nl(d.message)}</div>
+    <div class="inv-dt">${d.date ? `<div><small>Date</small>${esc(fmtDate(d.date))}</div>` : ''}${d.time ? `<div><small>Time</small>${esc(d.time)}</div>` : ''}${d.venue ? `<div class="full"><small>Venue</small>${esc(d.venue)}</div>` : ''}${d.dress ? `<div class="full"><small>Dress code</small>${esc(d.dress)}</div>` : ''}</div>
+    <div class="inv-ft">${d.rsvp ? `<div><b>RSVP</b> ${esc(d.rsvp)}</div>` : ''}${d.extra ? `<div>${esc(d.extra)}</div>` : ''}</div>`;
+  const inner = banded
+    ? `<div class="inv-in"><div class="inv-hd">${logo}${title}</div><div class="inv-bd">${body}</div></div>`
+    : `<div class="fr2"></div><div class="fr"></div><div class="inv-in">${logo}${title}${body}</div>`;
+  return `<div class="doc inv ${banded ? 'banded' : ''}" style="${rootStyle(S)}">${inner}${wm()}</div>`;
+}
+
+/* ===== Certificate ===== */
+function corner(c, ac) {
+  return `<svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg"><path d="M4 92V30C4 16 16 4 30 4h62" fill="none" stroke="${c}" stroke-width="3"/><path d="M14 92V36c0-12 10-22 22-22h56" fill="none" stroke="${ac}" stroke-width="1.5"/><path d="M4 4l22 0M4 4l0 22" stroke="${c}" stroke-width="3" fill="none"/><circle cx="30" cy="30" r="5" fill="${ac}"/><path d="M30 18l5 6-5 6-5-6z" fill="${c}" opacity=".35" transform="translate(14 14)"/></svg>`;
+}
+function seal(S) {
+  const st = S.st, id = gid(); const pts = []; const N = 28;
+  for (let i = 0; i < N * 2; i++) { const a = Math.PI * i / N - Math.PI / 2; const r = i % 2 ? 50 : 58; pts.push((66 + r * Math.cos(a)).toFixed(1) + ',' + (66 + r * Math.sin(a)).toFixed(1)); }
+  const txt = (S.d.sealText || 'Certified').toUpperCase();
+  return `<svg class="ct-seal" viewBox="0 0 132 150" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${st.c1}"/><stop offset="1" stop-color="${st.c2}"/></linearGradient></defs>
+    <path d="M44 100l-14 46 24-12 10 14 8-46z" fill="${st.ac}"/><path d="M88 100l14 46-24-12-10 14-8-46z" fill="${st.c1}"/>
+    <polygon points="${pts.join(' ')}" fill="url(#${id})"/><circle cx="66" cy="66" r="42" fill="none" stroke="${st.ac}" stroke-width="2.5"/><circle cx="66" cy="66" r="36" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1"/>
+    <path d="M66 40l6.5 14 15 1.6-11.3 10.2 3.3 15L66 73.3 52.5 80.8l3.3-15L44.5 55.6l15-1.6z" fill="${st.ac}"/>
+    <text x="66" y="96" text-anchor="middle" font-family="Montserrat,Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="1.5" fill="#fff">${esc(txt.slice(0, 14))}</text></svg>`;
+}
+function certDoc(S) {
+  const d = S.d, st = S.st, b = st.border || 'classic', paper = PAPER[st.paper] || PAPER.ivory;
+  const nf = st.nameFont || 'script', nc = st.nameColor === 'ink' ? '#1d2733' : (st.nameColor === 'accent' ? st.ac : st.c1);
+  const long = (d.recipient || '').length;
+  const nameSize = nf === 'script' ? (long > 26 ? 56 : long > 20 ? 68 : 84) : nf === 'modern' ? (long > 24 ? 30 : long > 18 ? 38 : 46) : (long > 26 ? 38 : long > 20 ? 46 : (nf === 'italic' ? 66 : 56));
+  let frame = '';
+  if (b === 'classic') frame = `<div class="ct-fr" style="inset:26px;border:3px solid ${st.c1}"></div><div class="ct-fr" style="inset:38px;border:1px solid ${st.ac}"></div>`;
+  else if (b === 'modern') frame = `<div class="ct-fr" style="inset:0;background:linear-gradient(135deg,${st.c1},${st.c2})"></div><div class="ct-fr" style="inset:24px;background:${paper}"></div><div class="ct-fr" style="inset:36px;border:1.5px solid ${st.ac}"></div>`;
+  else if (b === 'ornate') frame = `<div class="ct-fr" style="inset:22px;border:2px solid ${st.c1}"></div><div class="ct-fr" style="inset:30px;border:1px solid ${st.ac}"></div>` +
+    [[18, 18, 0], [1009, 18, 90], [1009, 680, 180], [18, 680, 270]].map(p => `<div class="ct-fr" style="left:${p[0]}px;top:${p[1]}px;width:96px;height:96px;transform:rotate(${p[2]}deg)">${corner(st.c1, st.ac)}</div>`).join('');
+  else frame = `<div class="ct-fr" style="left:0;top:0;bottom:0;width:150px;background:linear-gradient(170deg,${st.c1},${st.c2})"></div><div class="ct-fr" style="left:150px;top:0;bottom:0;width:6px;background:${st.ac}"></div><div class="ct-fr" style="left:176px;right:26px;top:26px;bottom:26px;border:1px solid ${rgba(st.c1, .45)}"></div>`;
+  const logo = d.logo ? `<div class="ct-lg"><div class="li" style="background-image:url('${d.logo}')"></div></div>` : '';
+  const sg = (img, name, role) => (name || img || role) ? `<div class="ct-sig">${img ? `<div class="ct-sigi" style="background-image:url('${img}')"></div>` : (name ? `<div class="ct-sigt">${esc(name)}</div>` : '<div class="ct-sigi"></div>')}<div class="ct-line"></div><div class="ct-sn">${esc(name)}</div><div class="ct-sr">${esc(role)}</div></div>` : '<div class="ct-sig"></div>';
+  const meta = [d.date && fmtDate(d.date), d.certNo && ('Certificate no. ' + d.certNo)].filter(Boolean).join('   ·   ');
+  return `<div class="doc cert b-${b}" style="${rootStyle(S, `--nc:${nc};`)}width:1123px;height:794px">${frame}
+    <div class="ct-in">${logo}<div class="ct-org">${esc(d.orgName)}</div><div class="ct-title">${esc(d.title)}</div><div class="ct-sub">${esc(d.subtitle)}</div>
+    <div class="ct-name ${nf}" style="font-size:${nameSize}px">${esc(d.recipient)}</div><div class="ct-rule"></div><div class="ct-reason">${nl(d.reason)}</div>
+    <div class="ct-foot">${sg(d.sig1Img, d.sig1Name, d.sig1Role)}${d.showSeal ? seal(S) : '<div class="ct-seal"></div>'}${sg(d.sig2Img, d.sig2Name, d.sig2Role)}<div class="ct-meta">${esc(meta)}</div></div></div>${wm()}</div>`;
+}
+
+/* ===== Business card ===== */
+const ICONS = {
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>',
+  pin: '<path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>'
+};
+const bcLine = (k, t) => t ? `<div class="bc-ln"><span class="bc-ic"><svg viewBox="0 0 24 24">${ICONS[k]}</svg></span>${esc(t)}</div>` : '';
+function bcDoc(S) {
+  const d = S.d, st = S.st, minimal = st.layout === 'minimal';
+  const info = `<div class="br"><div class="bc-nm">${esc(d.personName)}</div><div class="bc-jt">${esc(d.jobTitle)}</div>${minimal ? '<div class="rule"></div>' : ''}<div class="bc-co">${esc(d.company)}</div>${bcLine('phone', d.phone)}${bcLine('mail', d.email)}${bcLine('web', d.website)}${bcLine('pin', d.address)}</div>`;
+  const front = minimal ? `<div class="bc minimal">${info}</div>` : `<div class="bc split"><div class="bl">${logoTile(d, 'bc-lg', d.company)}</div>${info}</div>`;
+  const back = `<div class="bc back">${d.logo ? `<div class="bc-lg" style="width:84px;height:84px"><div class="li" style="background-image:url('${d.logo}')"></div></div>` : `<div class="bc-lg mono" style="width:84px;height:84px">${esc(initials(d.company))}</div>`}<div class="ln"></div><div class="tg">${esc(d.tagline || d.company)}</div></div>`;
+  return `<div class="doc bc-sheet" style="${rootStyle(S)}">${front}${back}${wm()}</div>`;
+}
+
+const RENDER = { bizDoc, idDoc, passDoc, invDoc, certDoc, bcDoc };
+function buildDoc(S) { return RENDER[TYPES[S.type].renderer](S); }
+
+/* =====================================================================
+   TEMPLATE REGISTRY: fields, samples and options for each document
+   ===================================================================== */
+const f = (k, l, t = 'text', o = {}) => Object.assign({ k, l, t }, o);
+const OPT_LAYOUT = { k: 'layout', l: 'Header style', o: [['clean', 'Clean'], ['banded', 'Banded']] };
+const OPT_FONT = { k: 'font', l: 'Font style', o: Object.keys(FONTS).map(k => [k, FONTS[k].n]) };
+const OPT_TONE = { k: 'tone', l: 'Card tone', o: [['light', 'Light'], ['dark', 'Colour']] };
+const CURRENCY_OPTS = Object.keys(CUR).map(k => [k, `${k} (${CUR[k].s.trim()})`]);
+
+const secBiz = () => ({ t: 'Your business', open: true, prof: true, f: [f('logo', 'Logo', 'image', { kind: 'logo' }), f('bizName', 'Business name'), f('tagline', 'Tagline (optional)'), f('bizAddress', 'Address', 'long'), f('bizPhone', 'Phone'), f('bizEmail', 'Email'), f('bizWebsite', 'Website'), f('bizTax', 'Tax ID or RC number (optional)')] });
+const secClient = label => ({ t: label, open: true, f: [f('clientName', 'Name'), f('clientAddress', 'Address', 'long'), f('clientPhone', 'Phone'), f('clientEmail', 'Email')] });
+const secBank = () => ({ t: 'Payment details', inc: 'showBank', prof: true, f: [f('bankName', 'Bank'), f('accName', 'Account name'), f('accNo', 'Account number'), f('payNote', 'Payment note')] });
+const secNotes = () => ({ t: 'Notes and terms', f: [f('notes', 'Notes', 'long'), f('terms', 'Terms and conditions', 'long'), f('thanks', 'Thank-you line')] });
+const secSig = (label) => ({ t: label || 'Signature', inc: 'showSig', prof: true, f: [f('sigImg', 'Signature image (optional)', 'image', { kind: 'sig' }), f('sigName', 'Name'), f('sigRole', 'Title')] });
+const secItems = { t: 'Items and totals', open: true, special: 'items' };
+const secStyle = { t: 'Colours and style', open: true, special: 'style' };
+
+const SB = {
+  bizName: 'Kemi & Sons Fabrics', tagline: 'Quality fabrics, fair prices', bizAddress: '12 Adeola Odeku Street\nVictoria Island, Lagos', bizPhone: '0801 234 5678',
+  bizEmail: 'hello@kemifabrics.com', bizWebsite: 'www.kemifabrics.com', bizTax: '', logo: ''
+};
+const SC = { clientName: 'Chinedu Okafor', clientAddress: '5 Admiralty Way\nLekki Phase 1, Lagos', clientPhone: '0802 345 6789', clientEmail: 'chinedu@example.com' };
+const SBANK = { showBank: true, bankName: 'GTBank', accName: 'Kemi & Sons Fabrics', accNo: '0123456789', payNote: 'Please use the document number as your payment reference.' };
+const SSIG = { showSig: true, sigImg: '', sigName: 'Kemi Adeyemi', sigRole: 'Managing Director' };
+const SITEMS = () => [{ d: 'Ankara fabric (6 yards)', q: 3, p: 12500 }, { d: 'Tailoring and finishing', q: 1, p: 25000 }, { d: 'Delivery within Lagos', q: 1, p: 3500 }];
+const STOT = { currency: 'NGN', discountType: 'pct', discount: '', taxLabel: 'VAT', taxRate: '', shipping: '', paid: '' };
+
+const TYPES = {
+  invoice: {
+    cat: 'business', name: 'Invoice', blurb: 'Ask for payment with a clean, professional invoice.', renderer: 'bizDoc', docTitle: 'Invoice', numLabel: 'Invoice no.', party: 'Bill to', w: 794, minH: 1123, scale: 2, pdf: 'a4', prefix: 'INV',
+    calc: { price: true, discount: true, tax: true, shipping: true, paid: true, bank: true }, sigLabel: 'Authorised signature',
+    meta: d => [['Issue date', fmtDate(d.issueDate)], ['Due date', fmtDate(d.dueDate)], ['Reference', d.reference]],
+    style: { layout: 'clean', font: 'modern' }, styleOpts: [OPT_LAYOUT, OPT_FONT],
+    sections: [secBiz(), { t: 'Invoice details', open: true, f: [f('title', 'Document title', 'select', { o: ['Invoice', 'Tax invoice', 'Proforma invoice'] }), f('number', 'Invoice number'), f('issueDate', 'Issue date', 'date'), f('dueDate', 'Due date', 'date'), f('reference', 'Customer reference or PO number'), f('stamp', 'Stamp', 'select', { o: [['', 'None'], ['PAID', 'PAID'], ['UNPAID', 'UNPAID'], ['OVERDUE', 'OVERDUE']] })] }, secClient('Bill to'), secItems, secBank(), secNotes(), secSig('Signature'), secStyle],
+    sample: () => Object.assign({}, SB, SC, SBANK, SSIG, STOT, { title: 'Invoice', number: '', issueDate: today(), dueDate: addDays(today(), 14), reference: '', stamp: '', items: SITEMS(), notes: '', terms: 'Payment is due within 14 days of the issue date.', thanks: 'Thank you for your business.', showWords: false })
+  },
+  receipt: {
+    cat: 'business', name: 'Receipt', blurb: 'Give customers proof of payment in seconds.', renderer: 'bizDoc', docTitle: 'Receipt', numLabel: 'Receipt no.', party: 'Received from', w: 640, minH: 0, scale: 2.5, pdf: 'fit', prefix: 'RCT',
+    calc: { price: true, discount: true, tax: true, shipping: false, paid: true, bank: false }, paidFull: true, sigLabel: 'Received by',
+    meta: d => [['Date', fmtDate(d.date)], ['Payment method', d.method], ['Reference', d.reference]],
+    style: { layout: 'clean', font: 'modern' }, styleOpts: [OPT_LAYOUT, OPT_FONT],
+    sections: [secBiz(), { t: 'Receipt details', open: true, f: [f('number', 'Receipt number'), f('date', 'Date', 'date'), f('method', 'Payment method', 'select', { o: ['Cash', 'Bank transfer', 'POS', 'Cheque', 'Mobile money', 'Card'] }), f('reference', 'Payment reference'), f('stamp', 'Stamp', 'select', { o: [['', 'None'], ['PAID', 'PAID'], ['RECEIVED', 'RECEIVED']] })] }, secClient('Received from'), secItems, secNotes(), secSig('Signature'), secStyle],
+    sample: () => Object.assign({}, SB, SC, SSIG, STOT, { number: '', date: today(), method: 'Bank transfer', reference: '', stamp: 'PAID', items: SITEMS().slice(0, 2), notes: '', terms: '', thanks: 'Thank you. We appreciate your patronage.', showWords: true, sigRole: 'Sales' })
+  },
+  quotation: {
+    cat: 'business', name: 'Quotation', blurb: 'Send a price estimate that wins the job.', renderer: 'bizDoc', docTitle: 'Quotation', numLabel: 'Quote no.', party: 'Prepared for', w: 794, minH: 1123, scale: 2, pdf: 'a4', prefix: 'QUO', accept: true,
+    calc: { price: true, discount: true, tax: true, shipping: true, paid: false, bank: true }, sigLabel: 'Prepared by',
+    meta: d => [['Issue date', fmtDate(d.issueDate)], ['Valid until', fmtDate(d.validUntil)], ['Project', d.reference]],
+    style: { layout: 'clean', font: 'modern' }, styleOpts: [OPT_LAYOUT, OPT_FONT],
+    sections: [secBiz(), { t: 'Quotation details', open: true, f: [f('number', 'Quote number'), f('issueDate', 'Issue date', 'date'), f('validUntil', 'Valid until', 'date'), f('reference', 'Project or reference')] }, secClient('Prepared for'), secItems, secBank(), secNotes(), secSig('Your signature'), secStyle],
+    sample: () => Object.assign({}, SB, SC, SBANK, SSIG, STOT, { number: '', issueDate: today(), validUntil: addDays(today(), 30), reference: 'Wedding fabric order', items: SITEMS(), notes: '', terms: 'This quotation is valid for 30 days. A 50% deposit confirms the order.', thanks: 'We look forward to working with you.', showWords: false, showBank: false })
+  },
+  delivery: {
+    cat: 'business', name: 'Delivery note', blurb: 'List what was delivered and get it signed for.', renderer: 'bizDoc', docTitle: 'Delivery note', numLabel: 'Note no.', party: 'Deliver to', w: 794, minH: 1123, scale: 2, pdf: 'a4', prefix: 'DN', receivedBy: true,
+    calc: { price: false, discount: false, tax: false, shipping: false, paid: false, bank: false }, sigLabel: 'Dispatched by',
+    meta: d => [['Date', fmtDate(d.date)], ['Order ref', d.reference], ['Delivered by', d.deliveredBy], ['Vehicle', d.vehicle]],
+    style: { layout: 'clean', font: 'modern' }, styleOpts: [OPT_LAYOUT, OPT_FONT],
+    sections: [secBiz(), { t: 'Delivery details', open: true, f: [f('number', 'Note number'), f('date', 'Date', 'date'), f('reference', 'Order reference'), f('deliveredBy', 'Delivered by'), f('vehicle', 'Vehicle or plate number')] }, secClient('Deliver to'), secItems, secNotes(), secSig('Dispatch signature'), secStyle],
+    sample: () => Object.assign({}, SB, SC, SSIG, { currency: 'NGN', number: '', date: today(), reference: 'ORD-2041', deliveredBy: 'Tunde Bello', vehicle: 'LND 482 KJA', items: [{ d: 'Ankara fabric (6 yards), blue', q: 3 }, { d: 'Lace fabric (5 yards), cream', q: 2 }, { d: 'Sewing thread, assorted', q: 12 }], notes: 'Please check the goods before signing.', terms: '', thanks: '', sigRole: 'Dispatch' })
+  },
+  po: {
+    cat: 'business', name: 'Purchase order', blurb: 'Order goods from a supplier in writing.', renderer: 'bizDoc', docTitle: 'Purchase order', numLabel: 'PO no.', party: 'Vendor', w: 794, minH: 1123, scale: 2, pdf: 'a4', prefix: 'PO',
+    calc: { price: true, discount: false, tax: true, shipping: true, paid: false, bank: false }, sigLabel: 'Authorised by',
+    meta: d => [['Order date', fmtDate(d.date)], ['Delivery date', fmtDate(d.deliveryDate)], ['Payment terms', d.paymentTerms]],
+    style: { layout: 'clean', font: 'modern' }, styleOpts: [OPT_LAYOUT, OPT_FONT],
+    sections: [secBiz(), { t: 'Order details', open: true, f: [f('number', 'PO number'), f('date', 'Order date', 'date'), f('deliveryDate', 'Delivery date', 'date'), f('paymentTerms', 'Payment terms'), f('shipTo', 'Ship to', 'long')] }, secClient('Vendor or supplier'), secItems, secNotes(), secSig('Authorised by'), secStyle],
+    sample: () => Object.assign({}, SB, SSIG, STOT, { clientName: 'Zenith Textile Mills', clientAddress: '22 Industrial Avenue\nIkeja, Lagos', clientPhone: '0803 456 7890', clientEmail: 'sales@zenithtextile.com', number: '', date: today(), deliveryDate: addDays(today(), 10), paymentTerms: 'Net 14 days', shipTo: '12 Adeola Odeku Street\nVictoria Island, Lagos', items: [{ d: 'Cotton roll, white (50 yards)', q: 4, p: 48000 }, { d: 'Ankara bundle, assorted', q: 10, p: 21000 }], taxLabel: 'VAT', taxRate: 7.5, notes: '', terms: 'Goods must match the specification above.', thanks: '', sigRole: 'Procurement' })
+  },
+  certificate: {
+    cat: 'certs', name: 'Certificate', blurb: 'Award, completion or appreciation certificates with your logo.', renderer: 'certDoc', w: 1123, minH: 794, scale: 2, pdf: 'fit', prefix: 'CERT',
+    bulk: { key: 'recipient', label: 'recipient names' },
+    style: { border: 'classic', nameFont: 'script', nameColor: 'main', paper: 'ivory', font: 'elegant' },
+    styleOpts: [{ k: 'border', l: 'Border design', o: [['classic', 'Classic'], ['modern', 'Modern'], ['ornate', 'Ornate'], ['band', 'Side band']] }, { k: 'nameFont', l: 'Name style', o: [['script', 'Script'], ['serif', 'Serif'], ['italic', 'Italic'], ['modern', 'Modern caps']] }, { k: 'nameColor', l: 'Name colour', o: [['main', 'Main colour'], ['accent', 'Gold accent'], ['ink', 'Dark ink']] }, { k: 'paper', l: 'Paper', o: [['ivory', 'Ivory'], ['white', 'White']] }, OPT_FONT],
+    sections: [{ t: 'Certificate', open: true, f: [f('title', 'Title'), f('subtitle', 'Opening line'), f('recipient', 'Recipient name'), f('reason', 'Reason or description', 'long')] }, { t: 'Organisation', open: true, prof: true, f: [f('logo', 'Logo', 'image', { kind: 'logo' }), f('orgName', 'Organisation name')] }, { t: 'Date and number', f: [f('date', 'Date', 'date'), f('certNo', 'Certificate number'), f('sealText', 'Seal text')] }, { t: 'Signatures', open: true, f: [f('sig1Name', 'First signer name'), f('sig1Role', 'First signer title'), f('sig1Img', 'First signature image', 'image', { kind: 'sig' }), f('sig2Name', 'Second signer name'), f('sig2Role', 'Second signer title'), f('sig2Img', 'Second signature image', 'image', { kind: 'sig' })] }, { t: 'Options', f: [f('showSeal', 'Show the gold seal', 'check')] }, secStyle],
+    sample: () => ({ title: 'Certificate of Achievement', subtitle: 'This certificate is proudly presented to', recipient: 'Adaeze Nwosu', reason: 'in recognition of outstanding performance and dedication during the 2026 Digital Skills Programme.', logo: '', orgName: 'Greenfield Academy', date: today(), certNo: '', sealText: 'Certified', sig1Name: 'Dr. A. Bello', sig1Role: 'Director', sig1Img: '', sig2Name: 'Mrs. C. Eze', sig2Role: 'Programme Lead', sig2Img: '', showSeal: true })
+  },
+  id: {
+    cat: 'cards', name: 'ID card', blurb: 'Staff, student or member ID with photo and QR code.', renderer: 'idDoc', w: 770, minH: 636, scale: 4, pdf: 'fit', prefix: 'ID',
+    bulk: { key: 'fullName', extra: 'idNumber', label: 'names, with an ID number after a comma if you have one' },
+    style: { tone: 'light', shape: 'circle', font: 'modern' },
+    styleOpts: [OPT_TONE, { k: 'shape', l: 'Photo shape', o: [['circle', 'Circle'], ['round', 'Rounded square']] }, OPT_FONT],
+    sections: [{ t: 'Organisation', open: true, prof: true, f: [f('logo', 'Logo', 'image', { kind: 'logo' }), f('orgName', 'Organisation name'), f('orgTag', 'Tagline (optional)'), f('orgAddress', 'Address', 'long'), f('orgPhone', 'Phone'), f('orgWeb', 'Website or email')] }, { t: 'Card holder', open: true, f: [f('photo', 'Photo', 'image', { kind: 'photo' }), f('fullName', 'Full name'), f('role', 'Role or position'), f('idNumber', 'ID number'), f('f1l', 'Detail 1 label'), f('f1v', 'Detail 1'), f('f2l', 'Detail 2 label'), f('f2v', 'Detail 2')] }, { t: 'Back of the card', f: [f('backText', 'Terms or notice', 'long'), f('showQr', 'Show a QR code on the front', 'check'), f('qrText', 'QR code text (blank uses name and ID)')] }, secSig('Authorised by'), secStyle],
+    sample: () => ({ logo: '', orgName: 'Greenfield Academy', orgTag: 'Learn. Lead. Serve.', orgAddress: '14 School Road, Ikeja, Lagos', orgPhone: '0801 234 5678', orgWeb: 'www.greenfield.edu.ng', photo: '', fullName: 'Adaeze Nwosu', role: 'Teacher', idNumber: 'GA-0042', f1l: 'Department', f1v: 'Science', f2l: 'Valid until', f2v: '31 Dec 2027', backText: 'This card is the property of the issuing organisation. If found, please return it to the address below.', showQr: true, qrText: '', showSig: true, sigImg: '', sigName: 'Dr. A. Bello', sigRole: 'Principal' })
+  },
+  pass: {
+    cat: 'events', name: 'Event pass', blurb: 'Badges and tickets with name, category and QR code.', renderer: 'passDoc', w: 400, minH: 640, scale: 3, pdf: 'fit', prefix: 'TKT',
+    bulk: { key: 'attendeeName', extra: 'category', label: 'attendee names, with a category after a comma if you have one' },
+    style: { tone: 'light', font: 'modern' }, styleOpts: [OPT_TONE, OPT_FONT],
+    sections: [{ t: 'Event', open: true, f: [f('eventName', 'Event name'), f('eventTag', 'Tagline'), f('date', 'Date', 'date'), f('time', 'Time'), f('venue', 'Venue')] }, { t: 'Attendee', open: true, f: [f('attendeeName', 'Name'), f('company', 'Company or title'), f('category', 'Category', 'text', { list: ['GUEST', 'VIP', 'SPEAKER', 'STAFF', 'PRESS', 'EXHIBITOR', 'ORGANISER'] }), f('seat', 'Seat or table'), f('ticketNo', 'Ticket number'), f('photo', 'Photo (optional)', 'image', { kind: 'photo' })] }, { t: 'Organiser', prof: true, f: [f('logo', 'Logo', 'image', { kind: 'logo' }), f('orgName', 'Organiser name')] }, { t: 'Options', f: [f('showPhoto', 'Show the photo', 'check'), f('showQr', 'Show a QR code', 'check')] }, secStyle],
+    sample: () => ({ logo: '', orgName: 'Lagos Creators Hub', eventName: 'Creators Summit 2026', eventTag: 'Build. Share. Earn.', date: addDays(today(), 30), time: '10:00 AM', venue: 'Landmark Centre, Victoria Island', attendeeName: 'Chinedu Okafor', company: 'Okafor Studio', category: 'VIP', seat: 'Table 4', ticketNo: 'TKT-0001', photo: '', showPhoto: true, showQr: true })
+  },
+  invitation: {
+    cat: 'events', name: 'Invitation', blurb: 'Weddings, parties and launches. Add a guest name to personalise.', renderer: 'invDoc', w: 600, minH: 840, scale: 2.5, pdf: 'fit', prefix: 'INVITE',
+    bulk: { key: 'guestName', label: 'guest names' },
+    style: { layout: 'framed', paper: 'ivory', font: 'elegant' },
+    styleOpts: [{ k: 'layout', l: 'Layout', o: [['framed', 'Framed'], ['banded', 'Banded']] }, { k: 'paper', l: 'Paper', o: [['ivory', 'Ivory'], ['white', 'White']] }, OPT_FONT],
+    sections: [{ t: 'Invitation', open: true, f: [f('guestName', 'Guest name (optional)'), f('lead', 'Opening line'), f('eventTitle', 'Event title'), f('hosts', 'Hosted by'), f('message', 'Message', 'long')] }, { t: 'When and where', open: true, f: [f('date', 'Date', 'date'), f('time', 'Time'), f('venue', 'Venue')] }, { t: 'More details', f: [f('dress', 'Dress code'), f('rsvp', 'RSVP contact'), f('extra', 'Extra line')] }, { t: 'Logo (optional)', f: [f('logo', 'Logo', 'image', { kind: 'logo' })] }, secStyle],
+    sample: () => ({ guestName: '', lead: 'You are cordially invited to', eventTitle: 'Our Wedding Reception', hosts: 'Mr and Mrs Okafor', message: 'Together with our families, we invite you to celebrate with us on this special day. Your presence will make it complete.', date: addDays(today(), 45), time: '2:00 PM', venue: 'The Grand Hall, Ikoyi, Lagos', dress: 'Gold and cream', rsvp: '0801 234 5678', extra: '', logo: '' })
+  },
+  bizcard: {
+    cat: 'cards', name: 'Business card', blurb: 'A front and back card ready to share or print.', renderer: 'bcDoc', w: 585, minH: 700, scale: 3, pdf: 'fit', prefix: 'BC',
+    style: { layout: 'split', font: 'modern' }, styleOpts: [{ k: 'layout', l: 'Layout', o: [['split', 'Side panel'], ['minimal', 'Minimal']] }, OPT_FONT],
+    sections: [{ t: 'Your details', open: true, prof: true, f: [f('logo', 'Logo', 'image', { kind: 'logo' }), f('personName', 'Your name'), f('jobTitle', 'Job title'), f('company', 'Company'), f('phone', 'Phone'), f('email', 'Email'), f('website', 'Website'), f('address', 'Address'), f('tagline', 'Back of card line')] }, secStyle],
+    sample: () => ({ logo: '', personName: 'Kemi Adeyemi', jobTitle: 'Managing Director', company: 'Kemi & Sons Fabrics', phone: '0801 234 5678', email: 'kemi@kemifabrics.com', website: 'www.kemifabrics.com', address: 'Victoria Island, Lagos', tagline: 'Quality fabrics, fair prices' })
+  }
+};
+Object.keys(TYPES).forEach(k => { TYPES[k].id = k; });
+const CATS = [['all', 'All templates'], ['business', 'Business'], ['certs', 'Certificates'], ['cards', 'IDs and cards'], ['events', 'Events']];
+
+/* Profile keys saved between documents, with matching names across templates */
+const ALIAS = { bizName: 'orgName', orgName: 'bizName', bizAddress: 'orgAddress', orgAddress: 'bizAddress', bizPhone: 'orgPhone', orgPhone: 'bizPhone', bizWebsite: 'orgWeb', orgWeb: 'bizWebsite', bizPhone2: 'phone', phone: 'bizPhone', bizEmail: 'email', email: 'bizEmail', company: 'bizName' };
+const profileKeys = T => { const s = new Set(); T.sections.forEach(sec => { if (sec.prof) sec.f.forEach(x => s.add(x.k)); }); return s; };
+
+function defaultStyle(T) {
+  const pal = store.get('palette', null) || PALETTES[0];
+  return Object.assign({ c1: pal.c1, c2: pal.c2, ac: pal.ac }, T.style);
+}
+function newState(type) {
+  const T = TYPES[type]; const prof = store.get('profile', {}); const d = T.sample(); const keys = profileKeys(T);
+  keys.forEach(k => {
+    if (prof[k] != null && prof[k] !== '') d[k] = prof[k];
+    else if (ALIAS[k] && prof[ALIAS[k]] != null && prof[ALIAS[k]] !== '' && k !== 'company') d[k] = prof[ALIAS[k]];
+  });
+  const counters = store.get('counters', {});
+  if ('number' in d || 'certNo' in d || 'ticketNo' in d || 'idNumber' in d) {
+    const n = (counters[type] || 0) + 1;
+    if ('number' in d && !d.number) d.number = T.prefix + '-' + pad(n, 4);
+    if ('certNo' in d && !d.certNo) d.certNo = T.prefix + '-' + pad(n, 4);
+  }
+  return { id: uid(), type, d, st: defaultStyle(T) };
+}
+function bumpCounter(S) {
+  const T = TYPES[S.type]; const val = S.d.number || S.d.certNo; if (!val) return;
+  const m = String(val).match(/(\d+)$/); if (!m) return;
+  const counters = store.get('counters', {}); const n = parseInt(m[1], 10);
+  if (n > (counters[S.type] || 0)) { counters[S.type] = n; store.set('counters', counters); }
+}
+
+/* =====================================================================
+   APP: views, editor, export, bulk, plans, ads
+   ===================================================================== */
+const clone = o => JSON.parse(JSON.stringify(o));
+const ICO = {
+  moon: '<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  chat: '<path d="M21 11.5a8.5 8.5 0 01-12.6 7.4L3 20l1.2-5A8.5 8.5 0 1121 11.5z"/>',
+  down: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+  share: '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>',
+  save: '<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  back: '<path d="M15 5l-7 7 7 7"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'
+};
+const ic = n => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICO[n] || ''}</svg>`;
+
+let S = null;            // the document being edited
+let currentView = 'home';
+
+/* ===== Toast, busy, modal ===== */
+let toastT;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3800); }
+function busy(msg) { const b = $('#busy'); if (!msg) { b.hidden = true; return; } $('#busyMsg').textContent = msg; b.hidden = false; }
+function openModal(html, after) {
+  const m = $('#modal'); $('#modalBody').innerHTML = html; m.hidden = false; document.body.style.overflow = 'hidden';
+  if (after) after($('#modalBody'));
+  const first = $('#modalBody input,#modalBody textarea,#modalBody button:not(.x)'); if (first && !('ontouchstart' in window)) first.focus();
+}
+function closeModal() { $('#modal').hidden = true; document.body.style.overflow = ''; $('#modalBody').innerHTML = ''; }
+
+/* ===== Theme ===== */
+function applyTheme() {
+  const t = store.get('theme', null);
+  if (t) document.documentElement.setAttribute('data-theme', t); else document.documentElement.removeAttribute('data-theme');
+  const dark = t ? t === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  $('#theme').innerHTML = ic(dark ? 'sun' : 'moon'); $('#theme').setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+}
+function toggleTheme() {
+  const t = store.get('theme', null);
+  const dark = t ? t === 'dark' : (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  store.set('theme', dark ? 'light' : 'dark'); applyTheme();
+}
+
+/* ===== Ads ===== */
+let adScript = false;
+function renderAds() {
+  $$('[data-ad]').forEach(el => {
+    if (isPro()) { el.innerHTML = ''; el.dataset.done = ''; return; }
+    if (el.dataset.done) return;
+    const A = CONFIG.ads, slot = A.slots[el.dataset.ad];
+    if (A.client && slot) {
+      el.innerHTML = `<div class="ad"><span class="ad-l">Advertisement</span><ins class="adsbygoogle" style="display:block" data-ad-client="${esc(A.client)}" data-ad-slot="${esc(slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`;
+      if (!adScript) { adScript = true; const s = document.createElement('script'); s.async = true; s.crossOrigin = 'anonymous'; s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(A.client); document.head.appendChild(s); }
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { }
+    } else if (A.placeholders) {
+      el.innerHTML = '<div class="ad ph"><span class="ad-l">Advertisement</span><span>Ad space</span></div>';
+    }
+    el.dataset.done = '1';
+  });
+}
+
+/* ===== Thumbnails ===== */
+function sampleState(type) { const T = TYPES[type]; return { id: 'x', type, d: T.sample(), st: defaultStyle(T) }; }
+function mountThumb(el, st) { el.innerHTML = `<div>${buildDoc(st)}</div>`; }
+function fitThumb(el) {
+  const inner = el.firstElementChild; if (!inner) return; const doc = inner.firstElementChild; if (!doc) return;
+  const cw = el.clientWidth; if (!cw) return;
+  const w = doc.offsetWidth || 1, h = doc.offsetHeight || 1, k = cw / w;
+  inner.style.transform = `scale(${k})`; inner.style.width = w + 'px';
+  const cap = +el.dataset.cap || 1e9; el.style.height = Math.min(h * k, cap) + 'px';
+}
+function fitThumbs(root) { $$('.thumb', root || document).forEach(fitThumb); }
+
+/* ===== Home ===== */
+let homeCat = 'all';
+function renderHome() {
+  $('#chips').innerHTML = CATS.map(c => `<button class="chip" data-cat="${c[0]}" aria-pressed="${homeCat === c[0]}">${esc(c[1])}</button>`).join('');
+  const list = Object.values(TYPES).filter(T => homeCat === 'all' || T.cat === homeCat);
+  $('#tgrid').innerHTML = list.map(T => `<button class="tcard" data-type="${T.id}"><div class="thumb" data-cap="300" data-t="${T.id}"></div><div><h3>${esc(T.name)}</h3><p>${esc(T.blurb)}</p></div><span class="go">Create now &rarr;</span></button>`).join('');
+  $$('#tgrid .thumb').forEach(el => mountThumb(el, sampleState(el.dataset.t)));
+  $$('.fan .thumb').forEach(el => mountThumb(el, sampleState(el.dataset.t)));
+  fitThumbs($('#v-home'));
+}
+
+/* ===== Saved documents ===== */
+const docsList = () => store.get('docs', []);
+function docTitle(d, T) { return d.clientName || d.recipient || d.fullName || d.attendeeName || d.eventTitle || d.personName || d.guestName || ''; }
+function saveDoc(st, silent) {
+  const docs = docsList(); const i = docs.findIndex(x => x.id === st.id);
+  const rec = { id: st.id, type: st.type, d: st.d, st: st.st, t: Date.now() };
+  if (i < 0 && docs.length >= CONFIG.saveLimit) { if (!silent) toast(`Your saved list is full (${CONFIG.saveLimit}). Delete one in My documents to save more.`); return false; }
+  if (i < 0) docs.unshift(rec); else docs[i] = rec;
+  if (!store.set('docs', docs)) { if (!silent) toast('Your browser storage is full. Delete older documents or remove large images.'); return false; }
+  st.dirty = false; bumpCounter(st); if (!silent) toast('Saved to My documents.');
+  return true;
+}
+function renderDocs() {
+  const docs = docsList().sort((a, b) => b.t - a.t);
+  const box = $('#dgrid');
+  if (!docs.length) { box.innerHTML = '<div class="empty" style="grid-column:1/-1"><h3 style="margin-bottom:6px">Nothing saved yet</h3><p>Documents you create are kept here on this device, so you can reopen and edit them any time.</p><p style="margin-top:14px"><a class="btn primary" href="#templates">Create a document</a></p></div>'; return; }
+  box.innerHTML = docs.map(x => { const T = TYPES[x.type]; if (!T) return ''; const nm = docTitle(x.d, T);
+    return `<div class="tcard scard"><div class="thumb" data-cap="260" data-doc="${x.id}"></div><div><h3>${esc(T.name)}${x.d.number ? ' &middot; ' + esc(x.d.number) : ''}</h3><p>${esc(nm || 'Untitled')} &middot; ${new Date(x.t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p></div><div class="acts"><a class="btn sm primary" href="#doc/${x.id}">Open</a><button class="btn sm" data-dup="${x.id}">Duplicate</button><button class="btn sm ghost" data-delete="${x.id}">Delete</button></div></div>`; }).join('');
+  $$('#dgrid .thumb').forEach(el => { const x = docs.find(z => z.id === el.dataset.doc); mountThumb(el, x); });
+  fitThumbs(box);
+}
+
+/* ===== Views and routing ===== */
+function showView(name) {
+  currentView = name;
+  ['home', 'editor', 'docs', 'gate'].forEach(v => { $('#v-' + v).hidden = v !== name; });
+  $$('.nav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.nav === name)));
+  window.scrollTo(0, 0);
+}
+function leaveEditor() { if (currentView === 'editor' && S && S.dirty) saveDoc(S, true); }
+function route() {
+  leaveEditor(); closeModal();
+  if (!AUTH.user) { showView('gate'); return; }
+  const h = location.hash.replace(/^#\/?/, ''); const [a, b] = h.split('/');
+  if (a === 'new' && TYPES[b]) { S = newState(b); S.dirty = false; buildEditor(); showView('editor'); }
+  else if (a === 'doc') {
+    const x = docsList().find(z => z.id === b);
+    if (x && TYPES[x.type]) { S = { id: x.id, type: x.type, d: clone(x.d), st: clone(x.st), dirty: false }; buildEditor(); showView('editor'); }
+    else { location.hash = '#docs'; }
+  }
+  else if (a === 'docs') { renderDocs(); showView('docs'); fitThumbs($('#v-docs')); }
+  else { showView('home'); renderHome(); if (a === 'templates') $('#templates').scrollIntoView(); }
+  renderAds(); renderPro();
+}
+
+/* ===== Editor form ===== */
+const val = x => x == null ? '' : x;
+const optList = o => o.map(p => Array.isArray(p) ? p : [p, p]);
+function fieldHTML(x) {
+  const v = S.d[x.k], id = 'f_' + x.k;
+  if (x.t === 'check') return `<label class="chk"><input type="checkbox" data-k="${x.k}" ${v ? 'checked' : ''}> ${esc(x.l)}</label>`;
+  if (x.t === 'image') {
+    const has = !!v;
+    return `<div class="fld"><span>${esc(x.l)}</span><div class="imgbox"><div class="pv ${has ? 'has' : ''}" data-pv="${x.k}" ${has ? `style="background-image:url('${v}')"` : ''}></div><label class="btn sm">${has ? 'Change' : 'Choose image'}<input type="file" accept="image/*" data-img="${x.k}" data-kind="${x.kind}"></label><button type="button" class="btn sm ghost" data-rm="${x.k}" ${has ? '' : 'hidden'}>Remove</button></div></div>`;
+  }
+  let inp;
+  if (x.t === 'long') inp = `<textarea id="${id}" data-k="${x.k}">${esc(val(v))}</textarea>`;
+  else if (x.t === 'select') inp = `<select id="${id}" data-k="${x.k}">${optList(x.o).map(p => `<option value="${esc(p[0])}" ${String(v) === String(p[0]) ? 'selected' : ''}>${esc(p[1])}</option>`).join('')}</select>`;
+  else if (x.t === 'date') inp = `<input type="date" id="${id}" data-k="${x.k}" value="${esc(val(v))}">`;
+  else inp = `<input type="text" id="${id}" data-k="${x.k}" value="${esc(val(v))}" ${x.list ? `list="dl_${x.k}"` : ''} autocomplete="off">` + (x.list ? `<datalist id="dl_${x.k}">${x.list.map(o => `<option value="${esc(o)}">`).join('')}</datalist>` : '');
+  return `<div class="fld"><label for="${id}"><span>${esc(x.l)}</span></label>${inp}</div>`;
+}
+const numInp = (k, label, ph) => `<div class="fld"><label for="n_${k}"><span>${esc(label)}</span></label><input type="number" id="n_${k}" data-k="${k}" inputmode="decimal" step="any" min="0" placeholder="${esc(ph || '')}" value="${esc(val(S.d[k]))}"></div>`;
+function itemRows(T) {
+  const np = !T.calc.price;
+  return (S.d.items || []).map((r, i) => `<div class="it-row ${np ? 'np' : ''}"><input class="it-d" type="text" data-i="${i}" data-f="d" placeholder="Item or description" value="${esc(val(r.d))}" aria-label="Description"><input type="number" inputmode="decimal" step="any" min="0" data-i="${i}" data-f="q" placeholder="Qty" value="${esc(val(r.q))}" aria-label="Quantity">${np ? '' : `<input type="number" inputmode="decimal" step="any" min="0" data-i="${i}" data-f="p" placeholder="Price" value="${esc(val(r.p))}" aria-label="Unit price">`}<button type="button" class="it-x" data-del="${i}" aria-label="Remove item">&times;</button></div>`).join('');
+}
+function itemsHTML(T) {
+  let h = `<div class="items" id="itemRows">${itemRows(T)}</div><button type="button" class="btn sm" data-add>${ic('plus')} Add item</button>`;
+  if (T.calc.price) {
+    h += `<div class="fld"><label for="f_currency"><span>Currency</span></label><select id="f_currency" data-k="currency">${CURRENCY_OPTS.map(p => `<option value="${p[0]}" ${S.d.currency === p[0] ? 'selected' : ''}>${esc(p[1])}</option>`).join('')}</select></div>`;
+    if (T.calc.discount) h += `<div class="row2"><div class="fld"><label for="f_dt"><span>Discount type</span></label><select id="f_dt" data-k="discountType"><option value="pct" ${S.d.discountType !== 'amt' ? 'selected' : ''}>Percent (%)</option><option value="amt" ${S.d.discountType === 'amt' ? 'selected' : ''}>Fixed amount</option></select></div>${numInp('discount', 'Discount', '0')}</div>`;
+    if (T.calc.tax) h += `<div class="row2"><div class="fld"><label for="f_tl"><span>Tax name</span></label><input type="text" id="f_tl" data-k="taxLabel" value="${esc(val(S.d.taxLabel))}"></div>${numInp('taxRate', 'Tax rate (%)', '0')}</div>`;
+    if (T.calc.shipping) h += numInp('shipping', 'Shipping or delivery fee', '0');
+    if (T.calc.paid) h += numInp('paid', T.paidFull ? 'Amount paid (blank means paid in full)' : 'Amount already paid', '');
+    h += `<label class="chk"><input type="checkbox" data-k="showWords" ${S.d.showWords ? 'checked' : ''}> Show the total in words</label><div class="live"><span>Total</span><b id="liveTot"></b></div>`;
+  }
+  return h;
+}
+function styleHTML(T) {
+  const st = S.st;
+  const pals = PALETTES.map(p => `<button type="button" class="sw" data-pal="${p.id}" title="${esc(p.n)}" aria-label="${esc(p.n)}" aria-pressed="${st.c1 === p.c1 && st.c2 === p.c2 && st.ac === p.ac}" style="background:linear-gradient(135deg,${p.c1},${p.c2})"></button>`).join('');
+  let h = `<div class="fld"><span>Colour theme</span><div class="pal" id="pal">${pals}</div></div><div class="colors"><div class="fld"><span>Main</span><input type="color" data-sc="c1" value="${st.c1}" aria-label="Main colour"></div><div class="fld"><span>Gradient end</span><input type="color" data-sc="c2" value="${st.c2}" aria-label="Gradient end colour"></div><div class="fld"><span>Accent</span><input type="color" data-sc="ac" value="${st.ac}" aria-label="Accent colour"></div></div><p class="hint">Pick a ready theme, or fine-tune each colour. Your choice is remembered for next time.</p>`;
+  T.styleOpts.forEach(o => { h += `<div class="fld"><span>${esc(o.l)}</span><div class="opts" data-opt="${o.k}">${o.o.map(p => `<button type="button" class="opt" data-so="${o.k}" data-v="${p[0]}" aria-pressed="${st[o.k] === p[0]}">${esc(p[1])}</button>`).join('')}</div></div>`; });
+  return h;
+}
+function sectionHTML(sec, T) {
+  let body = '';
+  if (sec.special === 'items') body = itemsHTML(T);
+  else if (sec.special === 'style') body = styleHTML(T);
+  else { if (sec.inc) body += `<label class="chk"><input type="checkbox" data-k="${sec.inc}" ${S.d[sec.inc] ? 'checked' : ''}> Show this on the document</label>`; body += sec.f.map(fieldHTML).join(''); }
+  return `<details class="sec-d" ${sec.open ? 'open' : ''}><summary>${esc(sec.t)}</summary><div class="sec-body">${body}</div></details>`;
+}
+function buildEditor() {
+  const T = TYPES[S.type];
+  $('#edTitle').textContent = T.name;
+  $('#form').innerHTML = T.sections.map(sec => sectionHTML(sec, T)).join('');
+  $('#bulkBtn').hidden = !T.bulk;
+  $('#editor').dataset.pane = 'form'; $$('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pane === 'form')));
+  $('#stageIn').innerHTML = ''; renderPreview(); renderPro();
+}
+let rafId = 0;
+function schedule() { if (rafId) return; rafId = requestAnimationFrame(() => { rafId = 0; renderPreview(); }); }
+function renderPreview() {
+  const T = TYPES[S.type];
+  $('#stageIn').innerHTML = buildDoc(S);
+  fitStage();
+  const lt = $('#liveTot'); if (lt) lt.textContent = money(compute(S.d, T).total, S.d.currency);
+}
+function fitStage() {
+  const inner = $('#stageIn'), doc = inner.firstElementChild; if (!doc) return;
+  const w = doc.offsetWidth || 1, h = doc.offsetHeight || 1;
+  const card = $('#stageCard'); const avail = card.clientWidth - 28; if (avail <= 0) return;
+  const k = Math.min(1, avail / w);
+  inner.style.width = w + 'px'; inner.style.transform = `scale(${k})`;
+  const stage = $('#stage'); stage.style.width = w * k + 'px'; stage.style.height = h * k + 'px';
+}
+function setPane(p) { $('#editor').dataset.pane = p; $$('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pane === p))); if (p === 'prev') requestAnimationFrame(fitStage); window.scrollTo(0, 0); }
+
+function afterEdit(k) {
+  S.dirty = true;
+  const T = TYPES[S.type];
+  if (k && profileKeys(T).has(k)) {
+    const prof = store.get('profile', {}); prof[k] = S.d[k]; if (ALIAS[k] && k !== 'company') prof[ALIAS[k]] = S.d[k]; store.set('profile', prof);
+  }
+  schedule();
+}
+function onFormInput(e) {
+  const t = e.target;
+  if (t.dataset.img !== undefined) return;
+  if (t.dataset.k) { S.d[t.dataset.k] = t.type === 'checkbox' ? t.checked : t.value; afterEdit(t.dataset.k); }
+  else if (t.dataset.f !== undefined) { const r = S.d.items[+t.dataset.i]; if (r) { r[t.dataset.f] = t.value; afterEdit(); } }
+  else if (t.dataset.sc) { S.st[t.dataset.sc] = t.value; $$('#pal .sw').forEach(b => b.setAttribute('aria-pressed', 'false')); store.set('palette', { c1: S.st.c1, c2: S.st.c2, ac: S.st.ac }); afterEdit(); }
+}
+const IMG = { logo: [420, true], photo: [600, false], sig: [500, true] };
+async function onFormChange(e) {
+  const t = e.target;
+  if (t.dataset.img === undefined || !t.files || !t.files[0]) return;
+  const k = t.dataset.img, kind = IMG[t.dataset.kind] || IMG.logo;
+  try {
+    const url = await readImage(t.files[0], kind[0], kind[1]);
+    S.d[k] = url; const pv = $(`[data-pv="${k}"]`); pv.style.backgroundImage = `url('${url}')`; pv.classList.add('has');
+    $(`[data-rm="${k}"]`).hidden = false; t.parentElement.firstChild.textContent = 'Change';
+    if (!store.get('profile', {}) || true) afterEdit(k);
+  } catch (err) { toast('That image could not be read. Try a JPG or PNG file.'); }
+  t.value = '';
+}
+function onFormClick(e) {
+  const b = e.target.closest('button'); if (!b) return; const T = TYPES[S.type];
+  if (b.dataset.add !== undefined) {
+    S.d.items.push(T.calc.price ? { d: '', q: 1, p: '' } : { d: '', q: 1 }); $('#itemRows').innerHTML = itemRows(T); S.dirty = true; schedule();
+    const rows = $$('#itemRows .it-d'); rows[rows.length - 1].focus();
+  } else if (b.dataset.del !== undefined) {
+    S.d.items.splice(+b.dataset.del, 1); $('#itemRows').innerHTML = itemRows(T); S.dirty = true; schedule();
+  } else if (b.dataset.pal) {
+    const p = PALETTES.find(x => x.id === b.dataset.pal); Object.assign(S.st, { c1: p.c1, c2: p.c2, ac: p.ac });
+    $$('#pal .sw').forEach(s => s.setAttribute('aria-pressed', String(s === b)));
+    $$('[data-sc]').forEach(i => { i.value = S.st[i.dataset.sc]; });
+    store.set('palette', { c1: p.c1, c2: p.c2, ac: p.ac }); S.dirty = true; schedule();
+  } else if (b.dataset.so) {
+    S.st[b.dataset.so] = b.dataset.v; $$(`[data-so="${b.dataset.so}"]`).forEach(x => x.setAttribute('aria-pressed', String(x === b))); S.dirty = true; schedule();
+  } else if (b.dataset.rm) {
+    const k = b.dataset.rm; S.d[k] = ''; const pv = $(`[data-pv="${k}"]`); pv.style.backgroundImage = ''; pv.classList.remove('has'); b.hidden = true;
+    const lab = pv.nextElementSibling; if (lab && lab.firstChild) lab.firstChild.textContent = 'Choose image'; afterEdit(k);
+  }
+}
+
+/* ===== Export ===== */
+const LIBS = { h2c: ['https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', () => window.html2canvas], zip: ['https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', () => window.JSZip] };
+const libP = {};
+function lib(name) {
+  const L = LIBS[name]; if (L[1]()) return Promise.resolve();
+  if (!libP[name]) libP[name] = new Promise((res, rej) => { const s = document.createElement('script'); s.src = L[0]; s.onload = () => L[1]() ? res() : rej(new Error('lib')); s.onerror = () => { libP[name] = null; rej(new Error('net')); }; document.head.appendChild(s); });
+  return libP[name];
+}
+const frames = n => new Promise(r => { const go = i => i ? requestAnimationFrame(() => go(i - 1)) : r(); go(n); });
+async function snap(st, opt) {
+  opt = opt || {}; const T = TYPES[st.type]; const scale = opt.scale || T.scale;
+  await lib('h2c');
+  const host = document.createElement('div'); host.id = 'xhost';
+  host.style.cssText = 'position:fixed;left:-30000px;top:0;pointer-events:none;';
+  host.innerHTML = buildDoc(st); document.body.appendChild(host);
+  try {
+    await frames(2); if (document.fonts && document.fonts.ready) await document.fonts.ready; await new Promise(r => setTimeout(r, 80));
+    const el = host.firstElementChild; const w = el.offsetWidth, h = el.offsetHeight;
+    const canvas = await window.html2canvas(el, {
+      scale, backgroundColor: '#ffffff', useCORS: true, logging: false, width: w, height: h, windowWidth: Math.max(w, 1200), windowHeight: Math.max(h, 900), scrollX: 0, scrollY: 0,
+      onclone: doc => { const x = doc.getElementById('xhost'); if (x) { x.style.left = '0'; x.style.top = '0'; x.style.position = 'absolute'; } }
+    });
+    return { canvas, scale };
+  } finally { host.remove(); }
+}
+const toBlob = (c, type, q) => new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('blob')), type, q));
+function dl(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000); }
+function jpgBytes(c) { const b = atob(c.toDataURL('image/jpeg', .98).split(',')[1]); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+function pagesFrom(shot, T) {
+  const c = shot.canvas;
+  if (T.pdf === 'a4') {
+    const PW = 595.28, PH = 841.89, sliceH = Math.floor(c.width * PH / PW); const out = [];
+    for (let y = 0; y < c.height; y += sliceH) {
+      const h = Math.min(sliceH, c.height - y), s = document.createElement('canvas'); s.width = c.width; s.height = sliceH;
+      const x = s.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, s.width, s.height); x.drawImage(c, 0, y, c.width, h, 0, 0, c.width, h);
+      out.push({ pw: PW, ph: PH, w: s.width, h: s.height, jpg: jpgBytes(s) });
+    }
+    return out;
+  }
+  return [{ pw: c.width / shot.scale * .75, ph: c.height / shot.scale * .75, w: c.width, h: c.height, jpg: jpgBytes(c) }];
+}
+function makePdf(pages) {
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const push = b => { const u = typeof b === 'string' ? enc.encode(b) : b; parts.push(u); len += u.length; };
+  const n = k => (Math.round(k * 100) / 100).toString();
+  push('%PDF-1.4\n');
+  const total = 2 + pages.length * 3;
+  const obj = (id, body, stream) => { offs[id] = len; push(`${id} 0 obj\n${body}`); if (stream) { push('\nstream\n'); push(stream); push('\nendstream'); } push('\nendobj\n'); };
+  obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2, `<< /Type /Pages /Kids [${pages.map((p, i) => `${3 + i * 3} 0 R`).join(' ')}] /Count ${pages.length} >>`);
+  pages.forEach((p, i) => {
+    const pid = 3 + i * 3, cid = pid + 1, iid = pid + 2, cs = `q ${n(p.pw)} 0 0 ${n(p.ph)} 0 0 cm /Im0 Do Q`;
+    obj(pid, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${n(p.pw)} ${n(p.ph)}] /Resources << /XObject << /Im0 ${iid} 0 R >> >> /Contents ${cid} 0 R >>`);
+    obj(cid, `<< /Length ${cs.length} >>`, cs);
+    obj(iid, `<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpg.length} >>`, p.jpg);
+  });
+  const xr = len; let x = `xref\n0 ${total + 1}\n0000000000 65535 f \n`;
+  for (let i = 1; i <= total; i++) x += String(offs[i]).padStart(10, '0') + ' 00000 n \n';
+  push(x + `trailer\n<< /Size ${total + 1} /Root 1 0 R >>\nstartxref\n${xr}\n%%EOF`);
+  return new Blob(parts, { type: 'application/pdf' });
+}
+function fileBase(st) { const T = TYPES[st.type]; return slug([T.name, st.d.number || st.d.certNo || docTitle(st.d, T)].filter(Boolean).join(' ')); }
+let exporting = false;
+async function doExport(kind) {
+  if (exporting) return; exporting = true; const T = TYPES[S.type];
+  busy(kind === 'png' ? 'Creating your image...' : 'Creating your file...');
+  try {
+    const shot = await snap(S); const base = fileBase(S);
+    if (kind === 'png') dl(await toBlob(shot.canvas, 'image/png'), base + '.png');
+    else if (kind === 'pdf') dl(makePdf(pagesFrom(shot, T)), base + '.pdf');
+    else if (kind === 'share') await shareFile(shot, base, T);
+    saveDoc(S, true); if (kind !== 'share') toast('Done. Check your downloads.');
+  } catch (e) { console.error(e); toast('Could not create the file. Check your internet connection and try again, or message us on WhatsApp.'); }
+  finally { busy(false); exporting = false; }
+}
+async function shareFile(shot, base, T) {
+  const usePdf = T.cat === 'business';
+  const blob = usePdf ? makePdf(pagesFrom(shot, T)) : await toBlob(shot.canvas, 'image/png');
+  const name = base + (usePdf ? '.pdf' : '.png'), file = new File([blob], name, { type: blob.type });
+  const text = `Made with ${CONFIG.brand} (${CONFIG.domain})`;
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: name, text }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  dl(blob, name); toast('Saved. Attach the file in WhatsApp to send it.');
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+
+/* ===== Bulk ===== */
+const bumpStr = (s, n) => { const m = String(s || '').match(/^(.*?)(\d+)$/); return m ? m[1] + String(parseInt(m[2], 10) + n).padStart(m[2].length, '0') : s; };
+function openBulk() {
+  const T = TYPES[S.type], B = T.bulk; if (!B) return;
+  const lim = isPro() ? CONFIG.proBulkLimit : CONFIG.freeBulkLimit;
+  openModal(`<div class="sheet-h"><div><h3>Make many at once</h3><p class="hint" style="margin-top:6px">Paste one entry per line: ${esc(B.label)}. Your logo, colours and wording stay the same on every page.</p></div><button class="x" data-close aria-label="Close">&times;</button></div>
+  <textarea id="bk" rows="8" placeholder="Adaeze Nwosu&#10;Chinedu Okafor&#10;Ngozi Eze"></textarea>
+  <div class="row2" style="margin-top:12px"><div class="fld"><label for="bkf"><span>Download as</span></label><select id="bkf"><option value="zip">ZIP of PNG images</option><option value="pdf">One PDF, one page each</option></select></div><div class="fld"><span>Entries</span><b id="bkc"></b></div></div>
+  <p class="hint" id="bkn" style="margin:10px 0"></p><progress id="bkp" max="100" value="0" hidden></progress>
+  <div class="actions" style="margin-top:12px"><button class="btn primary" id="bkgo">${ic('layers')} Create files</button><button class="btn gold" id="bkpro" ${isPro() ? 'hidden' : ''}>${ic('star')} Unlock up to ${CONFIG.proBulkLimit}</button></div>`, root => {
+    const parse = () => $('#bk').value.split('\n').map(x => x.trim()).filter(Boolean).map(x => { if (!B.extra) return { n: x }; const i = x.indexOf(','); return i < 0 ? { n: x } : { n: x.slice(0, i).trim(), x: x.slice(i + 1).trim() }; });
+    const upd = () => { const c = parse().length; $('#bkc').textContent = `${c} of ${lim} allowed`; $('#bkn').textContent = c > lim ? (isPro() ? `Only the first ${lim} will be created.` : `Free use creates ${CONFIG.freeBulkLimit} at a time. Only the first ${lim} will be created. Unlock Pro for up to ${CONFIG.proBulkLimit}.`) : ''; };
+    $('#bk').addEventListener('input', upd); upd();
+    $('#bkpro').addEventListener('click', () => { closeModal(); openPricing('bulk'); });
+    $('#bkgo').addEventListener('click', async () => {
+      const rows = parse().slice(0, lim); if (!rows.length) { toast('Add at least one entry first.'); return; }
+      const fmt = $('#bkf').value, go = $('#bkgo'), pr = $('#bkp'); go.disabled = true; pr.hidden = false; pr.value = 0; exporting = true;
+      try {
+        await lib('h2c'); if (fmt === 'zip') await lib('zip');
+        const zip = fmt === 'zip' ? new JSZip() : null, pages = [];
+        for (let i = 0; i < rows.length; i++) {
+          const st = clone(S); st.d[B.key] = rows[i].n;
+          if (B.extra && rows[i].x) st.d[B.extra] = rows[i].x;
+          else ['idNumber', 'ticketNo', 'certNo'].forEach(k => { if (k in st.d && k !== B.extra) st.d[k] = bumpStr(S.d[k], i); });
+          const shot = await snap(st, { scale: Math.min(T.scale, 2) });
+          if (zip) zip.file(`${pad(i + 1, 3)}-${slug(rows[i].n)}.png`, await toBlob(shot.canvas, 'image/png')); else pagesFrom(shot, T).forEach(p => pages.push(p));
+          pr.value = Math.round((i + 1) / rows.length * 100); $('#bkn').textContent = `Created ${i + 1} of ${rows.length}`;
+        }
+        const base = slug(T.name + ' batch');
+        if (zip) dl(await zip.generateAsync({ type: 'blob' }), base + '.zip'); else dl(makePdf(pages), base + '.pdf');
+        toast(`Done. ${rows.length} created.`); closeModal();
+      } catch (e) { console.error(e); toast('Something went wrong while creating the files. Check your connection and try again.'); }
+      finally { go.disabled = false; exporting = false; }
+    });
+  });
+}
+
+/* ===== Plans ===== */
+function renderPro() {
+  const slot = $('#proSlot');
+  slot.innerHTML = isPro() ? `<span class="pro-chip">Pro &middot; ${daysLeft()} day${daysLeft() === 1 ? '' : 's'} left</span>` : `<button class="btn sm gold" data-pricing>${ic('star')} <span class="lg">Remove watermark</span><span class="sm2">Go Pro</span></button>`;
+  const m = $('#markBar'); if (m) m.hidden = isPro();
+}
+function openPricing(reason) {
+  let sel = 'month';
+  const plans = CONFIG.plans, B = CONFIG.payBank || {}, email = AUTH.user ? AUTH.user.email : '';
+  const waMsg = () => { const p = plans.find(x => x.id === sel); return `Hello ${CONFIG.brand}, I want the ${p.name} (${money(p.price, 'NGN').replace('.00', '')}). My account email is ${email}. I will send my payment receipt here.`; };
+  const bank = B.number ? `<div class="live" style="display:grid;gap:2px;font-weight:600"><span class="hint">Pay by bank transfer to</span><span>${esc(B.bank)}</span><span>${esc(B.name)}</span><span style="font-family:ui-monospace,Menlo,monospace;font-size:1.1rem;letter-spacing:.05em">${esc(B.number)}</span></div>` : '';
+  openModal(`<div class="sheet-h"><div><h3>Go Pro: remove the watermark</h3><p class="hint" style="margin-top:6px">${reason === 'bulk' ? 'Create up to ' + CONFIG.proBulkLimit + ' documents at once, and' : 'Get clean documents,'} with no watermark and no ads.</p></div><button class="x" data-close aria-label="Close">&times;</button></div>
+  <div class="plans" id="plans">${plans.map(p => `<button type="button" class="plan" data-plan="${p.id}" aria-pressed="${p.id === sel}">${p.best ? '<span class="tag">Most popular</span>' : ''}<span>${esc(p.name)}</span><b>${money(p.price, 'NGN').replace('.00', '')}</b><small>${esc(p.blurb)}</small></button>`).join('')}</div>
+  <ol class="list" style="color:var(--fg)"><li>Pick a plan and pay by bank transfer.</li><li>Send your payment receipt to us on WhatsApp. Tap the green button, and your account email is already filled in.</li><li>We send you a one-time unlock code. Enter it below.</li></ol>
+  ${bank}
+  <div class="actions" style="margin:12px 0"><a class="btn wa" id="payWa" target="_blank" rel="noopener">${ic('chat')} Send receipt on WhatsApp</a></div>
+  <div class="fld"><label for="code"><span>Have an unlock code?</span></label><div style="display:flex;gap:8px"><input type="text" id="code" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX" style="text-transform:uppercase"><button class="btn primary" id="redeem">Unlock</button></div></div>
+  <p class="hint" style="margin-top:10px">Each code works once, on one account. Pro follows your account on any phone or computer.</p>`, () => {
+    const wa = $('#payWa'); const upd = () => { wa.href = waLink(waMsg()); }; upd();
+    $('#plans').addEventListener('click', e => { const b = e.target.closest('.plan'); if (!b) return; sel = b.dataset.plan; $$('.plan').forEach(x => x.setAttribute('aria-pressed', String(x === b))); upd(); });
+    const go = async () => {
+      const raw = $('#code').value.trim(); if (!raw) { toast('Type your unlock code first.'); return; }
+      $('#redeem').disabled = true;
+      try {
+        const r = await redeemCode(raw);
+        if (r.ok) { closeModal(); toast(`Unlocked! Pro is active for ${r.days} day${r.days === 1 ? '' : 's'}. Thank you.`); }
+        else toast(r.error === 'used' ? 'That code has already been used.' : (r.error === 'signin' ? 'Please sign in first.' : 'That code is not valid. Check it and try again.'));
+      } catch (e) { toast(friendly(e)); } finally { const rb = $('#redeem'); if (rb) rb.disabled = false; }
+    };
+    $('#redeem').addEventListener('click', go); $('#code').addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  });
+}
+function openAbout() {
+  openModal(`<div class="sheet-h"><h3>About the creator</h3><button class="x" data-close aria-label="Close">&times;</button></div>
+  <p style="color:var(--muted)"><b style="color:var(--fg)">${esc(CONFIG.brand)}</b> was originally designed and built by <b style="color:var(--fg)">${esc(CONFIG.creator)}</b>, with one aim: to make professional documents easy and free for everyone.</p>
+  <p style="color:var(--muted);margin-top:10px">The design, templates, code and name are original work. &copy; ${new Date().getFullYear()} ${esc(CONFIG.creator)}. All rights reserved. Please do not copy or resell this site without written permission.</p>
+  <p style="color:var(--muted);margin-top:10px">For custom designs, partnerships, bulk orders or feedback, message me directly.</p>
+  <div class="actions" style="margin-top:16px"><a class="btn wa" target="_blank" rel="noopener" href="${waLink('Hello ' + CONFIG.creator + ', I found you through ' + CONFIG.brand + '.')}">${ic('chat')} Message on WhatsApp</a></div>`);
+}
+function openHelp() {
+  openModal(`<div class="sheet-h"><h3>Need help?</h3><button class="x" data-close aria-label="Close">&times;</button></div><p style="color:var(--muted)">Questions, a payment, a custom design or a bulk order? Message us on WhatsApp and we will reply as soon as we can.</p><div class="actions" style="margin-top:16px"><a class="btn wa" target="_blank" rel="noopener" href="${waLink()}">${ic('chat')} Chat on WhatsApp</a><a class="btn" href="tel:+${CONFIG.whatsapp}">Call ${esc(CONFIG.whatsappDisplay)}</a></div>`);
+}
+
+/* ===== Wiring ===== */
+function init() {
+  document.title = `${CONFIG.brand}: free invoices, receipts, certificates and ID cards`;
+  $$('[data-brand]').forEach(e => { e.textContent = CONFIG.brand; });
+  $$('[data-domain]').forEach(e => { e.textContent = CONFIG.domain; });
+  $$('[data-wa]').forEach(a => { a.href = waLink(); a.target = '_blank'; a.rel = 'noopener'; });
+  $$('[data-creator]').forEach(e => { e.textContent = CONFIG.creator; });
+  $$('[data-wadisp]').forEach(e => { e.textContent = CONFIG.whatsappDisplay; });
+  $('#year').textContent = new Date().getFullYear();
+  $('.brand i').textContent = CONFIG.brand.charAt(0);
+  applyTheme();
+  $('#theme').addEventListener('click', toggleTheme);
+  $('#gform').addEventListener('submit', gateSubmit); $('#ggoogle').hidden = !CONFIG.googleSignIn; $('#gor').hidden = !CONFIG.googleSignIn;
+  document.addEventListener('click', e => {
+    const t = e.target;
+    if (t.closest('[data-close]')) { closeModal(); return; }
+    if (t.id === 'modal') { closeModal(); return; }
+    if (t.closest('[data-pricing]')) { if (AUTH.user) openPricing(); return; }
+    if (t.closest('[data-help]')) { openHelp(); return; }
+    if (t.closest('[data-about]')) { openAbout(); return; }
+    if (t.closest('[data-account]')) { openAccount(); return; }
+    if (t.closest('[data-admin]')) { openAdmin(); return; }
+    const gt = t.closest('[data-gtab]'); if (gt) { setGateTab(gt.dataset.gtab); return; }
+    if (t.closest('#gforgot')) { gateForgot(); return; }
+    if (t.closest('#ggoogle')) { AUTH.be.google().catch(err => gateMsg(friendly(err))); return; }
+    const nav = t.closest('[data-nav]'); if (nav) { location.hash = nav.dataset.nav === 'home' ? '#' : '#' + nav.dataset.nav; if (nav.dataset.nav === 'home' && !location.hash) route(); return; }
+    const card = t.closest('.tcard[data-type]'); if (card) { location.hash = '#new/' + card.dataset.type; return; }
+    const go = t.closest('[data-go]'); if (go) { location.hash = '#new/' + go.dataset.go; return; }
+    const chip = t.closest('.chip'); if (chip) { homeCat = chip.dataset.cat; renderHome(); return; }
+    const dup = t.closest('[data-dup]'); if (dup) { const x = docsList().find(z => z.id === dup.dataset.dup); if (x) { const c = { id: uid(), type: x.type, d: clone(x.d), st: clone(x.st), dirty: false }; if (c.d.number) c.d.number = bumpStr(c.d.number, 1); if (saveDoc(c, false)) renderDocs(); } return; }
+    const del = t.closest('[data-delete]'); if (del) { if (confirm('Delete this document from this device?')) { store.set('docs', docsList().filter(z => z.id !== del.dataset.delete)); renderDocs(); } return; }
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').hidden) closeModal(); });
+  const form = $('#form'); form.addEventListener('input', onFormInput); form.addEventListener('change', onFormChange); form.addEventListener('click', onFormClick);
+  $$('.seg button').forEach(b => b.addEventListener('click', () => setPane(b.dataset.pane)));
+  $('#back').addEventListener('click', () => { if (history.length > 1 && /^#(new|doc)/.test(location.hash)) history.back(); else location.hash = '#'; });
+  $('#saveBtn').addEventListener('click', () => saveDoc(S, false));
+  $('#pngBtn').addEventListener('click', () => doExport('png'));
+  $('#pdfBtn').addEventListener('click', () => doExport('pdf'));
+  $('#shareBtn').addEventListener('click', () => doExport('share'));
+  $('#bulkBtn').addEventListener('click', openBulk);
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (currentView === 'editor') fitStage(); }).observe($('#stageCard'));
+  window.addEventListener('resize', () => { if (currentView === 'home') fitThumbs($('#v-home')); else if (currentView === 'docs') fitThumbs($('#v-docs')); else fitStage(); });
+  window.addEventListener('hashchange', route);
+  window.addEventListener('pagehide', () => { if (currentView === 'editor' && S && S.dirty) saveDoc(S, true); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (currentView === 'home') fitThumbs($('#v-home')); });
+  boot();
+}
+document.addEventListener('DOMContentLoaded', init);
+
+/* =====================================================================
+   ACCOUNTS: sign-in gate, live backend (Supabase) and test backend (this browser only)
+   ===================================================================== */
+const AUTH = { user: null, admin: false, be: null, ready: false };
+const SB_SRC = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+const hasSb = () => !!(CONFIG.supabaseUrl && CONFIG.supabaseKey);
+const normCode = s => { const t = String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); return t.length === 16 ? t.match(/.{4}/g).join('-') : String(s || '').trim().toUpperCase(); };
+const newCode = () => { const r = crypto.getRandomValues(new Uint8Array(8)); const h = [...r].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase(); return h.match(/.{4}/g).join('-'); };
+const PLAN_DAYS = { day: 1, month: 30, year: 365 };
+
+function friendly(e) {
+  const m = String((e && e.message) || e || '').toLowerCase();
+  if (m.includes('invalid login')) return 'Wrong email or password.';
+  if (m.includes('already registered') || m.includes('already been registered')) return 'That email already has an account. Try signing in.';
+  if (m.includes('password should be') || m.includes('at least 6')) return 'Use a password of at least 6 characters.';
+  if (m.includes('not confirmed')) return 'Please confirm your email first. Check your inbox.';
+  if (m.includes('rate limit') || m.includes('too many') || m.includes('security purposes')) return 'Too many tries. Please wait a minute and try again.';
+  if (m.includes('valid email') || m.includes('invalid email')) return 'Enter a valid email address.';
+  if (m.includes('fetch') || m.includes('network') || m.includes('failed to')) return 'Could not reach the server. Check your internet and try again.';
+  if (m.includes('live server')) return e.message;
+  if (m.includes('not allowed')) return 'This account is not allowed to do that.';
+  return 'Something went wrong. Please try again.';
+}
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('network')); document.head.appendChild(s); }); }
+
+/* ----- Live backend ----- */
+function liveBackend() {
+  const sb = window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  const userOf = s => s && s.user ? { id: s.user.id, email: s.user.email } : null;
+  const back = location.origin + location.pathname;
+  const must = r => { if (r.error) throw r.error; return r.data; };
+  return {
+    mode: 'live',
+    async init(onChange) {
+      sb.auth.onAuthStateChange((ev, s) => { setTimeout(() => onChange(userOf(s), ev), 0); });
+      const { data } = await sb.auth.getSession(); return userOf(data.session);
+    },
+    async signUp(email, pw) { const d = must(await sb.auth.signUp({ email, password: pw })); return { confirm: !d.session }; },
+    async signIn(email, pw) { must(await sb.auth.signInWithPassword({ email, password: pw })); },
+    async google() { must(await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: back } })); },
+    async reset(email) { must(await sb.auth.resetPasswordForEmail(email, { redirectTo: back })); },
+    async setPassword(pw) { must(await sb.auth.updateUser({ password: pw })); },
+    async signOut() { await sb.auth.signOut(); },
+    async profile(uid) {
+      const p = await sb.from('profiles').select('pro_until,plan').eq('id', uid).maybeSingle();
+      const a = await sb.rpc('is_admin');
+      return { pro_until: p.data && p.data.pro_until ? new Date(p.data.pro_until).getTime() : 0, plan: (p.data && p.data.plan) || '', admin: a.data === true };
+    },
+    async redeem(code) { return must(await sb.rpc('redeem_code', { p_code: code })); },
+    async createCodes(plan, qty, note) { return must(await sb.rpc('create_codes', { p_plan: plan, p_qty: qty, p_note: note || '' })); },
+    async listCodes() { return must(await sb.rpc('list_codes')) || []; }
+  };
+}
+
+/* ----- Test backend: lives only in this browser. For trying the site before Supabase is set up. ----- */
+function testBackend() {
+  let cb = () => { };
+  const users = () => store.get('users', {});
+  const me = () => { const us = users(), k = Object.keys(us).find(x => us[x].id === (AUTH.user && AUTH.user.id)); return [us, k]; };
+  return {
+    mode: 'test',
+    async init(onChange) { cb = onChange; const s = store.get('session', null); return s ? { id: s.id, email: s.email } : null; },
+    async signUp(email, pw) {
+      email = email.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('valid email');
+      if (pw.length < 6) throw new Error('password should be at least 6');
+      const u = users(); if (u[email]) throw new Error('already registered');
+      u[email] = { id: 'd' + uid() + uid(), pw: await sha256(pw), admin: !Object.keys(u).length, pro: 0, plan: '' }; store.set('users', u);
+      store.set('session', { id: u[email].id, email }); cb({ id: u[email].id, email }, 'SIGNED_IN'); return { confirm: false };
+    },
+    async signIn(email, pw) {
+      email = email.trim().toLowerCase(); const u = users()[email];
+      if (!u || u.pw !== await sha256(pw)) throw new Error('invalid login');
+      store.set('session', { id: u.id, email }); cb({ id: u.id, email }, 'SIGNED_IN');
+    },
+    async google() { throw new Error('Google sign-in needs the live server.'); },
+    async reset() { throw new Error('Password reset needs the live server.'); },
+    async setPassword() { },
+    async signOut() { store.set('session', null); cb(null, 'SIGNED_OUT'); },
+    async profile(uid) { const us = users(), k = Object.keys(us).find(x => us[x].id === uid), v = k ? us[k] : {}; return { pro_until: v.pro || 0, plan: v.plan || '', admin: !!v.admin }; },
+    async redeem(code) {
+      const cs = store.get('dcodes', []), c = cs.find(x => x.code === normCode(code));
+      if (!c) return { ok: false, error: 'invalid' }; if (c.used_by) return { ok: false, error: 'used' };
+      const [us, k] = me(); const base = Math.max(us[k].pro || 0, Date.now()); us[k].pro = base + c.days * 864e5; us[k].plan = c.plan;
+      c.used_by = k; c.used_at = Date.now(); store.set('users', us); store.set('dcodes', cs);
+      return { ok: true, pro_until: us[k].pro, plan: c.plan, days: c.days };
+    },
+    async createCodes(plan, qty, note) {
+      const cs = store.get('dcodes', []), out = [];
+      for (let i = 0; i < qty; i++) { const c = { code: newCode(), plan, days: PLAN_DAYS[plan], note: note || '', created_at: Date.now(), used_by: null }; cs.unshift(c); out.push({ code: c.code, plan, days: c.days }); }
+      store.set('dcodes', cs); return out;
+    },
+    async listCodes() { return store.get('dcodes', []).slice(0, 60).map(c => ({ code: c.code, plan: c.plan, days: c.days, note: c.note, used_by_email: c.used_by, used_at: c.used_at })); }
+  };
+}
+
+/* ----- Session handling ----- */
+async function refreshProfile() {
+  if (!AUTH.user) { ENT = null; AUTH.admin = false; return; }
+  try {
+    const p = await AUTH.be.profile(AUTH.user.id);
+    AUTH.admin = !!p.admin; ENT = p.pro_until > Date.now() ? { until: p.pro_until, plan: p.plan } : null;
+  } catch (e) { console.error(e); }
+}
+let lastUid = undefined;
+async function onAuth(u, ev) {
+  const id = u ? u.id : null;
+  if (id === lastUid && ev !== 'PASSWORD_RECOVERY') return;
+  if (currentView === 'editor' && S && S.dirty) saveDoc(S, true);
+  lastUid = id; AUTH.user = u; S = null;
+  store.ns = u ? 'u' + u.id.replace(/[^a-z0-9]/gi, '') + '_' : '';
+  document.body.classList.toggle('gated', !u);
+  await refreshProfile(); renderUser();
+  $$('[data-ad]').forEach(el => { el.dataset.done = ''; el.innerHTML = ''; });
+  if (!u) { location.hash = ''; }
+  route();
+  if (ev === 'PASSWORD_RECOVERY') openNewPassword();
+}
+function renderUser() {
+  const slot = $('#userSlot'); if (!slot) return;
+  slot.innerHTML = AUTH.user ? `<button class="btn sm ghost avatar" data-account aria-label="My account">${esc((AUTH.user.email || '?').charAt(0).toUpperCase())}</button>` : '';
+  renderPro();
+  const tb = $('#testBanner'); if (tb) tb.hidden = !(AUTH.be && AUTH.be.mode === 'test');
+}
+
+/* ----- Sign-in screen ----- */
+let gateTab = 'signin';
+function gateMsg(t, ok) { const m = $('#gmsg'); m.textContent = t || ''; m.className = 'gmsg' + (ok ? ' ok' : ''); m.hidden = !t; }
+function setGateTab(t) {
+  gateTab = t;
+  $$('.gtabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.gtab === t)));
+  $('#gsubmit').textContent = t === 'signin' ? 'Sign in' : 'Create my account';
+  $('#gforgot').hidden = t !== 'signin'; $('#gpw').autocomplete = t === 'signin' ? 'current-password' : 'new-password';
+  $('#gpw2box').hidden = t === 'signin'; gateMsg('');
+}
+async function gateSubmit(e) {
+  e.preventDefault();
+  const email = $('#gemail').value.trim(), pw = $('#gpw').value;
+  if (!/^\S+@\S+\.\S+$/.test(email)) { gateMsg('Enter a valid email address.'); return; }
+  if (pw.length < 6) { gateMsg('Use a password of at least 6 characters.'); return; }
+  if (gateTab === 'signup' && pw !== $('#gpw2').value) { gateMsg('The two passwords do not match.'); return; }
+  const btn = $('#gsubmit'); btn.disabled = true; gateMsg('');
+  try {
+    if (gateTab === 'signin') await AUTH.be.signIn(email, pw);
+    else { const r = await AUTH.be.signUp(email, pw); if (r.confirm) { setGateTab('signin'); gateMsg('Account created. Check your email and tap the link to confirm, then sign in.', true); } }
+  } catch (err) { gateMsg(friendly(err)); }
+  finally { btn.disabled = false; }
+}
+async function gateForgot() {
+  const email = $('#gemail').value.trim(); if (!/^\S+@\S+\.\S+$/.test(email)) { gateMsg('Type your email above first, then tap "Forgot password".'); return; }
+  try { await AUTH.be.reset(email); gateMsg('Check your email for a link to set a new password.', true); } catch (err) { gateMsg(friendly(err)); }
+}
+function openNewPassword() {
+  openModal(`<div class="sheet-h"><h3>Set a new password</h3></div><div class="fld"><label for="np1"><span>New password</span></label><input type="password" id="np1" autocomplete="new-password"></div><button class="btn primary" id="npgo" style="margin-top:12px">Save password</button>`, () => {
+    $('#npgo').addEventListener('click', async () => { const v = $('#np1').value; if (v.length < 6) { toast('Use at least 6 characters.'); return; } try { await AUTH.be.setPassword(v); closeModal(); toast('Password updated.'); } catch (e) { toast(friendly(e)); } });
+  });
+}
+
+/* ----- Account, code entry and admin ----- */
+function openAccount() {
+  const pro = isPro();
+  openModal(`<div class="sheet-h"><h3>My account</h3><button class="x" data-close aria-label="Close">&times;</button></div>
+  <p><b>${esc(AUTH.user.email)}</b></p>
+  <p class="hint" style="margin:6px 0 16px">${pro ? `Pro plan active. ${daysLeft()} day${daysLeft() === 1 ? '' : 's'} left.` : 'Free plan. Documents carry a small watermark.'}</p>
+  <div class="actions"><button class="btn gold" data-pricing>${ic('star')} ${pro ? 'Add more time' : 'Go Pro'}</button>${AUTH.admin ? `<button class="btn" data-admin>Issue unlock codes</button>` : ''}<button class="btn ghost" id="signout">Sign out</button></div>`, () => {
+    $('#signout').addEventListener('click', async () => { closeModal(); await AUTH.be.signOut(); });
+  });
+}
+async function redeemCode(raw) {
+  const r = await AUTH.be.redeem(normCode(raw));
+  if (r && r.ok) { await refreshProfile(); renderUser(); renderAds(); if (currentView === 'editor') renderPreview(); else if (currentView === 'home') renderHome(); return { ok: true, days: r.days }; }
+  return { ok: false, error: r && r.error };
+}
+async function openAdmin() {
+  const opts = CONFIG.plans.map(p => `<option value="${p.id}">${esc(p.name)} (${PLAN_DAYS[p.id]} day${PLAN_DAYS[p.id] === 1 ? '' : 's'})</option>`).join('');
+  openModal(`<div class="sheet-h"><div><h3>Issue unlock codes</h3><p class="hint" style="margin-top:6px">Make a one-time code after you have received payment. Each code works once, on one account.</p></div><button class="x" data-close aria-label="Close">&times;</button></div>
+  <div class="row2"><div class="fld"><label for="apl"><span>Plan</span></label><select id="apl">${opts}</select></div><div class="fld"><label for="aq"><span>How many</span></label><input type="number" id="aq" value="1" min="1" max="20"></div></div>
+  <div class="row2" style="margin-top:10px"><div class="fld"><label for="an"><span>Customer name (your note)</span></label><input type="text" id="an"></div><div class="fld"><label for="aph"><span>Customer WhatsApp number (optional)</span></label><input type="text" id="aph" inputmode="tel" placeholder="0803 000 0000"></div></div>
+  <div class="actions" style="margin-top:12px"><button class="btn primary" id="ago">Make code</button></div>
+  <div id="aout" style="margin-top:14px;display:grid;gap:8px"></div>
+  <h4 style="margin:20px 0 8px">Recent codes</h4><div id="alist" class="hint">Loading...</div>`, () => {
+    const intl = n => { n = String(n || '').replace(/\D/g, ''); if (!n) return ''; if (n.startsWith('0')) return '234' + n.slice(1); return n; };
+    const rowHTML = (c, ph) => { const plan = (CONFIG.plans.find(p => p.id === c.plan) || { name: c.plan }).name; const msg = `Hello! Thank you for your payment. Your ${CONFIG.brand} ${plan} unlock code is: ${c.code}\n\nSign in at ${CONFIG.domain}, tap your account icon, then "Go Pro", and enter the code. It works once.`; const link = `https://wa.me/${intl(ph)}?text=${encodeURIComponent(msg)}`;
+      return `<div class="live" style="font-weight:600;gap:8px;flex-wrap:wrap"><span style="font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em">${esc(c.code)}</span><span style="display:flex;gap:6px"><button class="btn sm" data-copy="${esc(c.code)}">Copy</button><a class="btn sm wa" target="_blank" rel="noopener" href="${link}">Send on WhatsApp</a></span></div>`; };
+    const load = async () => {
+      try {
+        const l = await AUTH.be.listCodes();
+        $('#alist').innerHTML = l.length ? `<div style="display:grid;gap:6px">${l.map(c => `<div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.88rem;border-bottom:1px solid var(--line);padding-bottom:6px"><span style="font-family:ui-monospace,Menlo,monospace">${esc(c.code)}</span><span>${esc(c.plan)}${c.note ? ' &middot; ' + esc(c.note) : ''}</span><span style="color:${c.used_by_email || c.used_at ? 'var(--muted)' : 'var(--ok)'}">${c.used_by_email ? 'Used by ' + esc(c.used_by_email) : (c.used_at ? 'Used' : 'Unused')}</span></div>`).join('')}</div>` : 'No codes yet.';
+      } catch (e) { $('#alist').textContent = friendly(e); }
+    };
+    load();
+    $('#modalBody').addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) { navigator.clipboard && navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Copied.'), () => toast('Select and copy the code by hand.')); } });
+    $('#ago').addEventListener('click', async () => {
+      const plan = $('#apl').value, qty = Math.max(1, Math.min(20, +$('#aq').value || 1)); $('#ago').disabled = true;
+      try { const out = await AUTH.be.createCodes(plan, qty, $('#an').value.trim()); $('#aout').innerHTML = out.map(c => rowHTML(c, $('#aph').value)).join(''); load(); }
+      catch (e) { toast(friendly(e)); } finally { const ab = $('#ago'); if (ab) ab.disabled = false; }
+    });
+  });
+}
+
+/* ----- Start-up ----- */
+async function boot() {
+  busy('Loading...');
+  try {
+    if (hasSb()) { await loadScript(SB_SRC); AUTH.be = liveBackend(); } else AUTH.be = testBackend();
+    const u = await AUTH.be.init(onAuth);
+    AUTH.ready = true; await onAuth(u, 'INITIAL');
+  } catch (e) {
+    console.error(e); AUTH.be = AUTH.be || testBackend(); document.body.classList.add('gated'); showView('gate');
+    gateMsg('Could not reach the server. Check your internet connection and refresh the page.');
+  } finally { busy(false); }
+}
+
+</script>
+</body>
+</html>
