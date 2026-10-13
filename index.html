@@ -310,7 +310,7 @@ footer a{font-weight:600;text-decoration:none;color:var(--fg)}
 .id-m small{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.65;font-weight:700}
 .id-ft{position:absolute;left:22px;right:22px;bottom:20px;display:flex;justify-content:space-between;align-items:flex-end}
 .qrb{background:#fff;padding:6px;border-radius:8px;width:86px;height:86px;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
-.qrb img{width:100%;height:100%;display:block}
+.qrb svg{width:100%;height:100%;display:block;shape-rendering:crispEdges}
 .id-no{text-align:right;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.8}
 .id-no b{display:block;font-size:17px;letter-spacing:.06em;color:var(--c1);opacity:1}
 .id.dark .id-no b{color:#fff}
@@ -756,8 +756,9 @@ function qrImg(text) {
     const q = QR.build(String(text)); if (!q) return '';
     const n = q.n; let p = '';
     for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.dark(r, c)) p += `M${c} ${r}h1v1h-1z`;
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges"><path d="${p}" fill="#111"/></svg>`;
-    return `<img alt="" src="data:image/svg+xml;base64,${btoa(svg)}">`;
+    // Keep the QR as inline SVG so html2canvas can capture it reliably on export.
+    // An SVG embedded inside an <img> data URL may appear in preview but disappear in PNG/PDF.
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges" role="img" aria-label="QR code"><rect width="${n}" height="${n}" fill="#fff"/><path d="${p}" fill="#111"/></svg>`;
   } catch (e) { return ''; }
 }
 
@@ -1054,7 +1055,7 @@ const TYPES = {
     sample: () => ({ title: 'Certificate of Achievement', subtitle: 'This certificate is proudly presented to', recipient: 'Adaeze Nwosu', reason: 'in recognition of outstanding performance and dedication during the 2026 Digital Skills Programme.', logo: '', orgName: 'Greenfield Academy', date: today(), certNo: '', sealText: 'Certified', sig1Name: 'Dr. A. Bello', sig1Role: 'Director', sig1Img: '', sig2Name: 'Mrs. C. Eze', sig2Role: 'Programme Lead', sig2Img: '', showSeal: true })
   },
   id: {
-    cat: 'cards', name: 'ID card', blurb: 'Staff, student or member ID with photo and QR code.', renderer: 'idDoc', w: 770, minH: 636, scale: 3, pdf: 'fit', prefix: 'ID',
+    cat: 'cards', name: 'ID card', blurb: 'Staff, student or member ID with photo and QR code.', renderer: 'idDoc', w: 770, minH: 636, scale: 4, pdf: 'fit', prefix: 'ID',
     bulk: { key: 'fullName', extra: 'idNumber', label: 'names, with an ID number after a comma if you have one' },
     style: { tone: 'light', shape: 'circle', font: 'modern' },
     styleOpts: [OPT_TONE, { k: 'shape', l: 'Photo shape', o: [['circle', 'Circle'], ['round', 'Rounded square']] }, OPT_FONT],
@@ -1395,7 +1396,7 @@ async function snap(st, opt) {
 }
 const toBlob = (c, type, q) => new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error('blob')), type, q));
 function dl(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000); }
-function jpgBytes(c) { const b = atob(c.toDataURL('image/jpeg', .92).split(',')[1]); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+function jpgBytes(c) { const b = atob(c.toDataURL('image/jpeg', .98).split(',')[1]); const u = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
 function pagesFrom(shot, T) {
   const c = shot.canvas;
   if (T.pdf === 'a4') {
